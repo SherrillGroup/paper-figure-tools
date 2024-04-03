@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cdsg_tools"
+version = "0.0.1"
+authors = [
+  { name="C. David Sherrill", email="sherrill@gatech.edu" },
+  { name="Lori A. Burns", email="" },
+  { name="Austin M. Wallace", email="awallace43@gatech.edu" },
+]
+description = "A collection of tools for writing papers and creating publication-quality figures."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/SherrillGroup/paper-figure-tools"
+"Bug Tracker" = "https://github.com/SherrillGroup/paper-figure-tools/issues"
+

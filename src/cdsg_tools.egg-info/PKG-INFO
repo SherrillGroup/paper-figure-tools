@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: cdsg_tools
+Version: 0.0.1
+Summary: A collection of tools for writing papers and creating publication-quality figures.
+Author-email: "C. David Sherrill" <sherrill@gatech.edu>, "Austin M. Wallace" <awallace43@gatech.edu>
+Project-URL: Homepage, https://github.com/SherrillGroup/paper-figure-tools
+Project-URL: Bug Tracker, https://github.com/SherrillGroup/paper-figure-tools/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # paper-figure-tools
 Code to auotmatically generate thread tables
 
