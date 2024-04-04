@@ -1,5 +1,7 @@
 # paper-figure-tools
-Code to auotmatically generate thread tables
+Code to generate figures and tables for publication, 
+including thread diagrams and LaTeX tables including
+such thread diagrams.
 
 # Installation
 1. clone this repo `git clone https://github.com/SherrillGroup/paper-figure-tools.git`
