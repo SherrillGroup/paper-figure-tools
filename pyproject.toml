@@ -9,6 +9,7 @@ authors = [
   { name="C. David Sherrill", email="sherrill@gatech.edu" },
   { name="Lori A. Burns", email="lori.burns@gmail.com" },
   { name="Austin M. Wallace", email="awallace43@gatech.edu" },
+  { name="Caroline T. Sargent", email="csargent30@gatech.edu" },
 ]
 description = "A collection of tools for writing papers and creating publication-quality figures."
 readme = "README.md"

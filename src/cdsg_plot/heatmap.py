@@ -8,7 +8,7 @@ def heatmap(dataframe, vmin= -2, vmax=2,  title='Title', xlabel = 'x-label', yla
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     files_saved = {}
-    pltfile = expand_saveas(saveas, def_prefix="heatmap", relpath=relpath)
+    pltfile = expand_saveas(saveas, def_filename='', def_prefix="heatmap", relpath=relpath)
     for ext in graphicsformat:
         savefile = pltfile + "." + ext.lower()
         plt.savefig(savefile, transparent=True, format=ext, bbox_inches="tight")
@@ -26,8 +26,4 @@ if __name__ == "__main__":
     # get maximum absolute error for setting vmin and vmax
     abs_max = abs(df).values.max()
     abs_max = math.ceil(abs_max)
-    heatmap(df, vmin = -1*abs_max, vmax=abs_max, title='Example', graphicsformat=['pdf','png'])
-
-
-
-
+    heatmap(df, vmin = -1*abs_max, vmax=abs_max, title='Example', saveas='heatmap', graphicsformat=['pdf','png'])
