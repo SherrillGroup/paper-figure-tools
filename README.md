@@ -71,8 +71,8 @@ aka (C. David Sherrill Group Plotting Tools)
 
 * "grey bars" plots
 
-![src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.pdf)
+![src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.png)
 
-[src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.pdf)
+[src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.png)
 
 

@@ -8,6 +8,6 @@ if __name__ == "__main__":
     None,
     {'mc':'MP2-CP-adzagain', 'data':[1.0, 0.8, 1.4, 1.6]}]
 
-    bars(more_dats, title='grey bars plot')
+    bars(more_dats, title='grey bars plot', graphicsformat=["png"])  # png for GH gallery
 
 
