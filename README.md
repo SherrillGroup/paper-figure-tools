@@ -76,4 +76,27 @@ aka (C. David Sherrill Group Plotting Tools)
 
 * next
 
+* Violin plots with error statistics
+  - Defined in [./src/cdsg_plot/error_statistics.py](./src/cdsg_plot/error_statistics.py)
+  - Demo 
+  - ![./gallery/example_violin.png](./gallery/example_violin.png)
+```python
+import cdsg_plot
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(
+    {
+        "MP2": 5 * np.random.randn(1000) + 0.5,
+        "HF": 5 * np.random.randn(1000) - 0.5,
+        "MP2.5": 5 * np.random.randn(1000) + 0.5,
+    }
+)
+# Only specify columns you want to plot
+vals = {
+    "MP2 label": "MP2",
+    "HF label": "HF",
+}
+cdsg_plot.error_statistics.violin_plot(df, vals, ylim=[-20, 35], output_filename="example.png")
+```
 
