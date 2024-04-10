@@ -997,7 +997,7 @@ def ternary(
             transparent=True,
             format=ext,
             bbox_inches="tight",
-            frameon=False,
+            #frameon=False,
             dpi=450,
             edgecolor="none",
             pad_inches=0.0,

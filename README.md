@@ -69,11 +69,41 @@ threads(
 
 aka (C. David Sherrill Group Plotting Tools)
 
-* "grey bars" plots
-  - Defined in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py).
+* "grey bars" plots for matplotlib
+  - Defined in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py) .
   - Demo in [src/cdsg_plot/grey_bars.py](src/cdsg_plot/grey_bars.py) .
   - ![src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.png)
 
+* "ternary" plots for matplotlib and plotly
+  - Defined for plotly in src/cdsg_plot/ternary.py](src/cdsg_plot/ternary.py) .
+  - Defined for matplotlib in `ternary` function in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py) .
+  - Demo of both in [src/cdsg_plot/ternary.py](src/cdsg_plot/ternary.py) .
+  - ![src/cdsg_plot/ternary.py](gallery/tern__lbld_e1dc9bf07c4e17794d7a0ac684255a96dcee50ff.png)
+  - ![src/cdsg_plot/ternary.py](gallery/tern__plotly.png)
+
 * next
 
+* Violin plots with error statistics
+  - Defined in [./src/cdsg_plot/error_statistics.py](./src/cdsg_plot/error_statistics.py)
+  - Demo 
+  - ![./gallery/example_violin.png](./gallery/example_violin.png)
+```python
+import cdsg_plot
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(
+    {
+        "MP2": 5 * np.random.randn(1000) + 0.5,
+        "HF": 5 * np.random.randn(1000) - 0.5,
+        "MP2.5": 5 * np.random.randn(1000) + 0.5,
+    }
+)
+# Only specify columns you want to plot
+vals = {
+    "MP2 label": "MP2",
+    "HF label": "HF",
+}
+cdsg_plot.error_statistics.violin_plot(df, vals, ylim=[-20, 35], output_filename="example.png")
+```
 
