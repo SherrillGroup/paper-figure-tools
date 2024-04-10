@@ -69,10 +69,17 @@ threads(
 
 aka (C. David Sherrill Group Plotting Tools)
 
-* "grey bars" plots
-  - Defined in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py).
+* "grey bars" plots for matplotlib
+  - Defined in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py) .
   - Demo in [src/cdsg_plot/grey_bars.py](src/cdsg_plot/grey_bars.py) .
   - ![src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.png)
+
+* "ternary" plots for matplotlib and plotly
+  - Defined for plotly in src/cdsg_plot/ternary.py](src/cdsg_plot/ternary.py) .
+  - Defined for matplotlib in `ternary` function in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py) .
+  - Demo of both in [src/cdsg_plot/ternary.py](src/cdsg_plot/ternary.py) .
+  - ![src/cdsg_plot/ternary.py](gallery/tern__lbld_e1dc9bf07c4e17794d7a0ac684255a96dcee50ff.png)
+  - ![src/cdsg_plot/ternary.py](gallery/tern__plotly.png)
 
 * next
 
