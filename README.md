@@ -1,5 +1,5 @@
 # paper-figure-tools
-Code to generate figures and tables for publication, 
+Code to generate figures and tables for publication,
 including thread diagrams and LaTeX tables including
 such thread diagrams.
 
@@ -9,7 +9,7 @@ such thread diagrams.
 
 # Usage
 ## Thread tables
-1. 
+1.
 ```python
 import cdsg_plot
 
@@ -62,3 +62,17 @@ threads(
     mape=[20.1, 25, 15, 5.5, 3.6],
 )
 ```
+
+## Gallery
+
+### cdsg_plot
+
+aka (C. David Sherrill Group Plotting Tools)
+
+* "grey bars" plots
+
+![src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.pdf)
+
+[src/cdsg_plot/bar.py](gallery/bar_grey_bars_plot_2ecf221b26493d61cc355adb67b152091f398a10.pdf)
+
+
