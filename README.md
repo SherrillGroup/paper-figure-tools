@@ -110,4 +110,4 @@ cdsg_plot.error_statistics.violin_plot(df, vals, ylim=[-20, 35], output_filename
 * Heatmap
   - Defined in [./src/cdsg_plot/heatmap.py](./src/cdsg_plot/heatmap.py)
   - Demo 
-  - ![./gallery/heatmap.png](./gallery/example_violin.png)
+  - ![./gallery/heatmap.png](./gallery/heatmap.png)
