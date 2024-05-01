@@ -81,6 +81,13 @@ aka (C. David Sherrill Group Plotting Tools)
   - ![src/cdsg_plot/ternary.py](gallery/tern__lbld_e1dc9bf07c4e17794d7a0ac684255a96dcee50ff.png)
   - ![src/cdsg_plot/ternary.py](gallery/tern__plotly.png)
 
+* "threads" plots for matplotlib and plotly
+  - Defined for plotly in src/cdsg_plot/threads.py](src/cdsg_plot/threads.py) .
+  - Defined for matplotlib in `threads` function in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py) .
+  - Demo of both in [src/cdsg_plot/threads.py](src/cdsg_plot/threads.py) .
+  - ![src/cdsg_plot/threads.py](gallery/thread_MP2-CPa[]z_lbld_2a8576a88f8188ad266905b35e03abefebdf8d3b.png)
+  - ![src/cdsg_plot/threads.py](gallery/threads__plotly.png)
+
 * next
 
 * Violin plots with error statistics
