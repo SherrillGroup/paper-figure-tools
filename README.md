@@ -86,7 +86,7 @@ aka (C. David Sherrill Group Plotting Tools)
   - Defined for matplotlib in `threads` function in [src/cdsg_plot/qcdb_plot.py](src/cdsg_plot/qcdb_plot.py) .
   - Demo of both in [src/cdsg_plot/threads.py](src/cdsg_plot/threads.py) .
   - ![src/cdsg_plot/threads.py](gallery/thread_MP2-CPa[]z_lbld_2a8576a88f8188ad266905b35e03abefebdf8d3b.png)
-  - ![src/cdsg_plot/threads.py](gallery/threads__plotly.png)
+  - ![src/cdsg_plot/threads.py](gallery/threads_plotly.png)
 
 * next
 
