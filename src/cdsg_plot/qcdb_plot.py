@@ -196,11 +196,15 @@ def flat(
     xlimit=4.0,
     xlines=[0.0, 0.3, 1.0],
     mae=None,
+    mae_linewidth=12,
     mape=None,
     view=True,
     saveas=None,
     relpath=False,
     graphicsformat=["pdf"],
+    alpha=1,
+    percentiles=None, # [0.1, 0.9],
+    zero_line=None, # {'color': 'black', 'linewidth': 1.0},
 ):
     """Generates a slat diagram between model chemistries with errors in
     single-item list *data*, which is supplied as part of the dictionary
@@ -226,6 +230,8 @@ def flat(
     #    fig.patch.set_visible(False)
     #    ax.patch.set_visible(False)
     ax.axis("off")
+    if zero_line is not None:
+        plt.axvline(0.0, color=zero_line["color"], linewidth=zero_line["linewidth"])
 
     for xl in xlines:
         plt.axvline(xl, color="grey", linewidth=4)
@@ -237,13 +243,16 @@ def flat(
         xvals = rxn["data"]
         clr = segment_color(color, rxn["color"] if "color" in rxn else None)
 
-        ax.plot(xvals, positions, "|", color=clr, markersize=13.0, mew=0.5, alpha=0.5)
+        ax.plot(xvals, positions, "|", color=clr, markersize=13.0, mew=0.5, alpha=alpha)
 
     # plot trimmings
     if mae is not None:
-        plt.axvline(-1 * mae, color="black", linewidth=12)
+        plt.axvline(-1 * mae, color="black", linewidth=mae_linewidth)
     if mape is not None:  # equivalent to MAE for a 10 kcal/mol interaction energy
         ax.plot(0.025 * mape, positions, "o", color="black", markersize=15.0)
+    if percentiles is not None:
+        for p in percentiles:
+            plt.axvline(p, color="red", linewidth=6.0)
 
     # save and show
     pltuid = title  # simple (not really unique) filename for LaTeX integration
