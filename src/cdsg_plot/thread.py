@@ -1,7 +1,8 @@
 from cdsg_plot.qcdb_plot import threads as mpl_threads
 
 
-def plotly_threads(data, labels, color=None, title='', xlimit=4.0, mae=None, mape=None,
+def plotly_threads(data, labels, color=None, title='', xlimit=4.0, xlimitleft=None, xticks=None,
+    mae=None, mape=None,
     mousetext=None, mouselink=None, mouseimag=None, mousetitle=None, mousediv=None,
     labeled=True, view=True,
     saveas=None, relpath=False, graphicsformat=['pdf']):
@@ -31,7 +32,12 @@ def plotly_threads(data, labels, color=None, title='', xlimit=4.0, mae=None, map
     for weft in range(Nweft - 1):
         posnT.extend([positions[weft] - lenS - gapT, positions[weft + 1] + lenS + gapT, None])
     posnM = []
-    xticks = [-0.5 * xlimit, -0.25 * xlimit, 0.0, 0.25 * xlimit, 0.5 * xlimit]
+    if xlimitleft is None:
+        xlimitleft = -1 * xlimit
+    xrange = xlimit - xlimitleft
+    if xticks is None:
+        xticks = [xlimitleft + 0.25 * xrange, xlimitleft + 0.375 * xrange,
+                  xlimitleft + 0.5 * xrange, xlimitleft + 0.625 * xrange, xlimitleft + 0.75 * xrange]
 
     # initialize plot
     import plotly.graph_objects as go
@@ -43,14 +49,14 @@ def plotly_threads(data, labels, color=None, title='', xlimit=4.0, mae=None, map
         height=72 * Nweft * 0.8,
         margin=dict(b=36, l=7, r=7, t=34, pad=0),
         showlegend=False,
-        xaxis=dict(range=[-xlimit, xlimit], tickvals=xticks, zeroline=True, zerolinewidth=3),
+        xaxis=dict(range=[xlimitleft, xlimit], tickvals=xticks, zeroline=True, zerolinewidth=3),
         yaxis=dict(range=[-1 * Nweft - 1, 0], showticklabels=False),
     )
 
     # label plot and tiers
     annot = []
     annot.append(go.layout.Annotation(
-        x=-0.9 * xlimit,
+        x=xlimitleft + 0.05 * xrange,
         y=-0.25,
         align='left',
         #xanchor='left',
@@ -60,7 +66,7 @@ def plotly_threads(data, labels, color=None, title='', xlimit=4.0, mae=None, map
     ))
     for weft in labels:
         annot.append(go.layout.Annotation(
-            x=-0.9 * xlimit,
+            x=xlimitleft + 0.05 * xrange,
             y=-(1.0 + labels.index(weft)),
             xref="x",
             yref="y",

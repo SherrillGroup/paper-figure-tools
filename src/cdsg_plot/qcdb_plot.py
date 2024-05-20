@@ -72,25 +72,25 @@ def expand_saveas(
 
 def segment_color(argcolor, saptcolor):
     """Find appropriate color expression between overall color directive
-    *argcolor* and particular color availibility *rxncolor*.
+    *argcolor* and particular color availibility *saptcolor*.
 
     """
     import matplotlib
 
-    # validate any sapt color
-    if saptcolor is not None:
-        if saptcolor < 0.0 or saptcolor > 1.0:
-            saptcolor = None
-
+    # May 2024 change: set outer (not rxn) color arg to "sapt" or "rgb" to get sapt interpretation.
+    #   Default None for outer color arg will no longer route to sapt interpretation.
     if argcolor is None:
         # no color argument, so take from rxn
-        if rxncolor is None:
+        if saptcolor is None:
             clr = "grey"
-        elif saptcolor is not None:
-            clr = matplotlib.cm.jet(saptcolor)
         else:
-            clr = rxncolor
+            clr = saptcolor
     elif argcolor == "sapt":
+        # validate any sapt color
+        if saptcolor is not None:
+            if saptcolor < 0.0 or saptcolor > 1.0:
+                saptcolor = None
+
         # sapt color from rxn if available
         if saptcolor is not None:
             clr = matplotlib.cm.jet(saptcolor)
@@ -595,6 +595,8 @@ def threads(
     color=None,
     title="",
     xlimit=4.0,
+    xlimitleft=None,
+    xticks=None,
     mae=None,
     mape=None,
     mousetext=None,
@@ -640,18 +642,24 @@ def threads(
             [positions[weft] - lenS - gapT, positions[weft + 1] + lenS + gapT, None]
         )
     posnM = []
+    if xlimitleft is None:
+        xlimitleft = -1 * xlimit
+    xrange = xlimit - xlimitleft
+    if xticks is None:
+        xticks = [xlimitleft + 0.25 * xrange, xlimitleft + 0.375 * xrange,
+                  xlimitleft + 0.5 * xrange, xlimitleft + 0.625 * xrange, xlimitleft + 0.75 * xrange]
 
     # initialize plot
     fht = Nweft * 0.8
     # fig, ax = plt.subplots(figsize=(12, fht))
     fig, ax = plt.subplots(figsize=(11, fht))
     plt.subplots_adjust(left=0.01, right=0.99, hspace=0.3)
-    plt.xlim([-xlimit, xlimit])
+    plt.xlim([xlimitleft, xlimit])
     plt.ylim([-1 * Nweft - 1, 0])
     plt.yticks([])
     ax.set_frame_on(False)
     if labeled:
-        ax.set_xticks([-0.5 * xlimit, -0.25 * xlimit, 0.0, 0.25 * xlimit, 0.5 * xlimit])
+        ax.set_xticks(xticks)
     else:
         ax.set_xticks([])
     for tick in ax.xaxis.get_major_ticks():
@@ -661,7 +669,7 @@ def threads(
     # label plot and tiers
     if labeled:
         ax.text(
-            -0.9 * xlimit,
+            xlimitleft + 0.05 * xrange,
             -0.25,
             title,
             verticalalignment="bottom",
@@ -672,7 +680,7 @@ def threads(
         )
         for weft in labels:
             ax.text(
-                -0.9 * xlimit,
+                xlimitleft + 0.05 * xrange,
                 -(1.2 + labels.index(weft)),
                 weft,
                 verticalalignment="bottom",
