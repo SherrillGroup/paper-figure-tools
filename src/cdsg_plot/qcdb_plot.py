@@ -412,7 +412,7 @@ def valerr(
     ebuf = max(0.01, abs(0.02 * emax))
     plt.xlim([xmin - xbuf, xmax + xbuf])
     ax1.set_ylim([vmin - vbuf, vmax + vbuf])
-    plt.legend(fontsize="x-small", frameon=False)
+    plt.legend(fontsize="x-small") #, frameon=False)
     ax2.set_ylim([emin - ebuf, emax + ebuf])
 
     # save and show
@@ -1005,7 +1005,7 @@ def ternary(
             transparent=True,
             format=ext,
             bbox_inches="tight",
-            #frameon=False,
+            # frameon=False,
             dpi=450,
             edgecolor="none",
             pad_inches=0.0,
@@ -1291,7 +1291,7 @@ def liliowa(
             transparent=True,
             format=ext,
             bbox_inches="tight",
-            frameon=False,
+            # frameon=False,
             pad_inches=0.0,
         )
         files_saved[ext.lower()] = savefile
@@ -1344,6 +1344,7 @@ if __name__ == "__main__":
         title="MP2-CPa[]z",
         mae=[0.25, 0.5, 0.5, 0.3, 1.0],
         mape=[20.1, 25, 15, 5.5, 3.6],
+        view=False,
     )
 
     more_dats = [
@@ -1353,7 +1354,7 @@ if __name__ == "__main__":
         {"mc": "MP2-CP-adzagain", "data": [1.0, 0.8, 1.4, 1.6]},
     ]
 
-    bars(more_dats, title="asdf")
+    bars(more_dats, title="asdf", view=False)
 
     single_dats = [
         {"dbse": "HSG", "sys": "1", "data": [0.3508]},
@@ -1750,6 +1751,7 @@ if __name__ == "__main__":
         mae=1.21356003247,
         mape=24.6665886087,
         xlimit=4.0,
+        view=False,
     )
 
     lin_dats = [-0.5, -0.4, -0.3, 0, 0.5, 0.8, 5]
@@ -1762,7 +1764,7 @@ if __name__ == "__main__":
         "038PHE-041ILE-1",
         "199LEU-202GLU-1",
     ]
-    iowa(lin_dats, lin_labs, title="ttl", xlimit=0.5)
+    iowa(lin_dats, lin_labs, title="ttl", xlimit=0.5, view=False)
 
     figs = [
         0.22,
@@ -1791,9 +1793,9 @@ if __name__ == "__main__":
         0,
         0.69,
     ]
-    liliowa(figs, saveas="SSI-default-MP2-CP-aqz", xlimit=1.0)
+    liliowa(figs, saveas="SSI-default-MP2-CP-aqz", xlimit=1.0, view=False)
 
-    disthist(lin_dats)
+    disthist(lin_dats, view=False)
 
     valerrdata = [
         {
@@ -1956,4 +1958,5 @@ if __name__ == "__main__":
         xtitle="Rang",
         title="aggh",
         graphicsformat=["png"],
+        view=False,
     )
