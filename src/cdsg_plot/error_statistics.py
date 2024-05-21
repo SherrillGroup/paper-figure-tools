@@ -488,15 +488,15 @@ def violin_plot_table_multi(
     fig = plt.figure(dpi=dpi)
     if figure_size is not None:
         plt.figure(figsize=figure_size)
-    if heights is None:
-        heights = []
+    if grid_heights is None:
+        grid_heights = []
         for i in range(len(dfs)):
-            heights.append(0.4)
-            heights.append(2)
+            grid_heights.append(0.4)
+            grid_heights.append(2)
     print(len(dfs) * 2)
 
     gs = gridspec.GridSpec(
-        len(dfs) * 2, 1, height_ratios=heights
+        len(dfs) * 2, 1, height_ratios=grid_heights
     )  # Adjust height ratios to change the size of subplots
     if rcParams is not None:
         plt.rcParams.update(rcParams)
