@@ -464,6 +464,7 @@ def violin_plot_table_multi(
     legend_loc="upper right",
     grid_heights=None,
     grid_widths=None,
+    mcure=None,
 ) -> None:
     """
     Create a dataframe with columns of errors pre-computed for generating
@@ -471,11 +472,19 @@ def violin_plot_table_multi(
 
     Args:
         df: DataFrame with columns of errors
+        Example:
+        dfs = [
+            {"df": df_jdz, "label": "jun-cc-pVDZ", "ylim": [-4, 2]},
+            {"df": df_adz, "label": "aug-cc-pVDZ", "ylim": [-2, 2]},
+            {"df": df_atz, "label": "aug-cc-pVTZ", "ylim": [-2, 2]},
+            {"df": df_adtz, "label": "aug-cc-pV[DT]Z", "ylim": [-2, 2]},
+        ]
         df_labels_and_columns: Dictionary of plotted labels along with the df column for data
         output_filename: Name of the output file
         ylim: list =[-15, 35],
         rcParams: can be set to None if latex is not used
         colors: list of colors for each df column plotted. A default will alternate between blue and green.
+        mcure: If requested, must pre-compute MCURE for each df_labels_and_columns key and assign as a dictionary
     """
     import numpy as np
     import matplotlib.pyplot as plt
@@ -491,7 +500,7 @@ def violin_plot_table_multi(
     if grid_heights is None:
         grid_heights = []
         for i in range(len(dfs)):
-            grid_heights.append(0.4)
+            grid_heights.append(0.6)
             grid_heights.append(2)
     print(len(dfs) * 2)
 
@@ -500,14 +509,14 @@ def violin_plot_table_multi(
     )  # Adjust height ratios to change the size of subplots
     if rcParams is not None:
         plt.rcParams.update(rcParams)
-    for ind, j in enumerate(dfs):
+    for ind_0, j in enumerate(dfs):
         df = j["df"]
         subplot_label = j["label"]
         ylim = j["ylim"]
         vLabels, vData = [], []
         annotations = []  # [(x, y, text), ...]
         cnt = 1
-        ind *= 2
+        ind = 2 * ind_0
         print(f"{ind = }, {subplot_label = }")
         plt.rcParams["text.usetex"] = usetex
         non_null = len(df)
@@ -529,6 +538,9 @@ def violin_plot_table_multi(
             text += r"\textrm{%.2f}" % max_pos_error
             text += "\n"
             text += r"\textrm{%.2f}" % max_neg_error
+            if mcure is not None:
+                text += "\n"
+                text += r"\textrm{%.2f}" % mcure[k][ind_0]
             annotations.append((cnt, m, text))
             cnt += 1
             tmp = df_sub[v].notna().sum()
@@ -662,6 +674,9 @@ def violin_plot_table_multi(
         error_labels += r"\textrm{MaxE}"
         error_labels += "\n"
         error_labels += r"\textrm{MinE}"
+        if mcure is not None:
+            error_labels += "\n"
+            error_labels += r"\textrm{MCURE}"
 
         subplot_title = r"\textbf{" + subplot_label + r"}"
         subplot_title += r"(\textbf{" + str(non_null) + r"})" 
@@ -673,7 +688,7 @@ def violin_plot_table_multi(
         ax_error.annotate(
             error_labels,
             xy=(0, 1),  # Position at the vertical center of the narrow subplot
-            xytext=(0, 0.2),
+            xytext=(0, 0.25),
             color="black",
             fontsize=f"{table_fontsize}",
             ha="center",
@@ -684,7 +699,7 @@ def violin_plot_table_multi(
                 text,
                 xy=(x, 1),  # Position at the vertical center of the narrow subplot
                 # xytext=(0, 0),
-                xytext=(x, 0.2),
+                xytext=(x, 0.25),
                 color="black",
                 fontsize=f"{table_fontsize}",
                 ha="center",
@@ -740,6 +755,7 @@ def violin_plot_table_multi_SAPT_components(
     legend_loc="upper right",
     grid_heights=None,
     grid_widths=None,
+    mcure=None,
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -794,14 +810,14 @@ def violin_plot_table_multi_SAPT_components(
             df_labels_and_columns = df_labels_and_columns_disp
             sapt_color = 'orange'
         print(f"{term = }")
-        for ind, j in enumerate(dfs):
+        for ind_0, j in enumerate(dfs):
             df = j["df"]
             subplot_label = j["label"]
             ylim = j["ylim"][nn]
             vLabels, vData = [], []
             annotations = []  # [(x, y, text), ...]
             cnt = 1
-            ind *= 2
+            ind = ind_0 * 2
             print(f"{ind = }, {subplot_label = }")
             plt.rcParams["text.usetex"] = usetex
             non_null = len(df)
@@ -823,6 +839,9 @@ def violin_plot_table_multi_SAPT_components(
                 text += r"\textrm{%.2f}" % max_pos_error
                 text += "\n"
                 text += r"\textrm{%.2f}" % max_neg_error
+                if mcure is not None:
+                    text += "\n"
+                    text += r"\textrm{%.2f}" % mcure[k][ind_0]
                 annotations.append((cnt, m, text))
                 cnt += 1
                 tmp = df_sub[v].notna().sum()
@@ -967,6 +986,9 @@ def violin_plot_table_multi_SAPT_components(
             error_labels += r"\textrm{MaxE}"
             error_labels += "\n"
             error_labels += r"\textrm{MinE}"
+            if mcure is not None:
+                error_labels += "\n"
+                error_labels += r"\textrm{MCURE}"
 
             if ind == 0:
                 # subplot_title = r"\textbf{" + subplot_label + r"}"
