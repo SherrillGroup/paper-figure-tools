@@ -74,6 +74,7 @@ def violin_plot(
         df_sub = df[df[v].notna()].copy()
         vData.append(df_sub[v].to_list())
         k_label = "\\textbf{" + k + "}"
+        k_label = convert_deltas(k_label)
         vLabels.append(k_label)
         m = df_sub[v].max()
         rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -267,6 +268,7 @@ def violin_plot_table(
         df_sub = df[df[v].notna()].copy()
         vData.append(df_sub[v].to_list())
         k_label = "\\textbf{" + k + "}"
+        k_label = convert_deltas(k_label)
         vLabels.append(k_label)
         m = df_sub[v].max()
         rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -525,6 +527,7 @@ def violin_plot_table_multi(
             df_sub = df[df[v].notna()].copy()
             vData.append(df_sub[v].to_list())
             k_label = "\\textbf{" + k + "}"
+            k_label = convert_deltas(k_label)
             vLabels.append(k_label)
             m = df_sub[v].max()
             rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -546,7 +549,6 @@ def violin_plot_table_multi(
             tmp = df_sub[v].notna().sum()
             if tmp < non_null:
                 non_null = tmp
-            print(f"{non_null = }")
 
         pd.set_option("display.max_columns", None)
         ax = plt.subplot(
@@ -681,9 +683,6 @@ def violin_plot_table_multi(
         subplot_title = r"\textbf{" + subplot_label + r"}"
         subplot_title += r"(\textbf{" + str(non_null) + r"})" 
         ax_error.set_title(subplot_title, pad=-4)
-        # subplot_label = r"\textbf{" + subplot_label + r"}"
-        # subplot_label += "\n" r"(\textbf{" + str(non_null) + r"}" ")\n"
-        # ax_error.set_ylabel(subplot_label, color="k")
 
         ax_error.annotate(
             error_labels,
@@ -725,6 +724,10 @@ def violin_plot_table_multi(
     )
     plt.clf()
     return
+
+def convert_deltas(k_label):
+    k_label = k_label.replace("DMP2", f"$\delta$MP2")
+    return k_label
 
 def violin_plot_table_multi_SAPT_components(
     dfs,
@@ -769,6 +772,14 @@ def violin_plot_table_multi_SAPT_components(
         ylim: list =[-15, 35],
         rcParams: can be set to None if latex is not used
         colors: list of colors for each df column plotted. A default will alternate between blue and green.
+        mcure: If requested, must pre-compute MCURE for each components df_labels_and_columns_<COMPONENT>
+        Dictionary structure:
+            mcure_labels = {
+                "ELST": [],
+                "EXCH": [],
+                "IND": [],
+                "DISP": [],
+            }
     """
     import numpy as np
     import matplotlib.pyplot as plt
@@ -818,7 +829,6 @@ def violin_plot_table_multi_SAPT_components(
             annotations = []  # [(x, y, text), ...]
             cnt = 1
             ind = ind_0 * 2
-            print(f"{ind = }, {subplot_label = }")
             plt.rcParams["text.usetex"] = usetex
             non_null = len(df)
             for k, v in df_labels_and_columns.items():
@@ -826,6 +836,7 @@ def violin_plot_table_multi_SAPT_components(
                 df_sub = df[df[v].notna()].copy()
                 vData.append(df_sub[v].to_list())
                 k_label = "\\textbf{" + k + "}"
+                k_label = convert_deltas(k_label)
                 vLabels.append(k_label)
                 m = df_sub[v].max()
                 rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -841,13 +852,12 @@ def violin_plot_table_multi_SAPT_components(
                 text += r"\textrm{%.2f}" % max_neg_error
                 if mcure is not None:
                     text += "\n"
-                    text += r"\textrm{%.2f}" % mcure[k][ind_0]
+                    text += r"\textrm{%.2f}" % mcure[term][k][ind_0]
                 annotations.append((cnt, m, text))
                 cnt += 1
                 tmp = df_sub[v].notna().sum()
                 if tmp < non_null:
                     non_null = tmp
-                print(f"{non_null = }")
 
             pd.set_option("display.max_columns", None)
             ax = plt.subplot(
@@ -955,17 +965,12 @@ def violin_plot_table_multi_SAPT_components(
                 xtick.set_alpha(0.8)
 
             if ind != len(dfs) * 2 - 2:
-                # ax.spines["bottom"].set_visible(False)
-                # ax.tick_params(bottom=False)
                 ax.tick_params(
                     left=True,
                     labelleft=True,
                     bottom=False,
                     labelbottom=False,
                 )
-
-                # plt.setp(ax.xaxis.get_ticklabels(), visible=False)
-                # do not have xlabels
 
             ax_error = plt.subplot(gs[ind, nn], sharex=ax)
             ax_error.spines['top'].set_visible(False)
@@ -991,22 +996,17 @@ def violin_plot_table_multi_SAPT_components(
                 error_labels += r"\textrm{MCURE}"
 
             if ind == 0:
-                # subplot_title = r"\textbf{" + subplot_label + r"}"
-                # subplot_title += r"(\textbf{" + str(non_null) + r"})" 
                 ax_error.spines['top'].set_visible(True)
                 subplot_title = r"\textbf{" + str(term) + r"}" 
                 ax_error.set_title(subplot_title, color=sapt_color, pad=-4)
-            # subplot_label = r"\textbf{" + subplot_label + r"}"
-            # subplot_label += "\n" r"(\textbf{" + str(non_null) + r"}" ")\n"
-            # ax_error.set_ylabel(subplot_label, color="k")
 
             ax_error.annotate(
                 error_labels,
                 xy=(0, 1),  # Position at the vertical center of the narrow subplot
-                xytext=(0, 0.4),
+                xytext=(0.0, 0.4),
                 color="black",
                 fontsize=f"{table_fontsize}",
-                ha="center",
+                ha="right",
                 va="center",
             )
             for idx, (x, y, text) in enumerate(annotations):
@@ -1043,6 +1043,8 @@ def violin_plot_table_multi_SAPT_components(
 
 if __name__ == "__main__":
     # Fake data generated for example
+    import pandas as pd
+    import numpy as np
     df = pd.DataFrame(
         {
             "MP2": 5 * np.random.randn(1000) + 0.5,

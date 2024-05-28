@@ -256,7 +256,9 @@ def flat(
 
     # save and show
     pltuid = title  # simple (not really unique) filename for LaTeX integration
-    pltfile = expand_saveas(saveas, pltuid, def_prefix="flat_", relpath=relpath)
+    if not os.path.exists('plots'):
+        os.makedirs('plots')
+    pltfile = expand_saveas(saveas, pltuid, def_prefix="plots/flat_", relpath=relpath)
     files_saved = {}
     for ext in graphicsformat:
         savefile = pltfile + "." + ext.lower()
