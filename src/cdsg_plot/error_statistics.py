@@ -628,7 +628,9 @@ def violin_plot_table_multi(
         if ylim is not None:
             ax.set_ylim(ylim)
             minor_yticks = create_minor_y_ticks(ylim)
+            print(f"{minor_yticks = }")
             ax.set_yticks(minor_yticks, minor=True)
+            ax.grid(which='minor', axis='y', color='black', linestyle=':')
 
         if ind == 0:
             lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
@@ -658,6 +660,284 @@ def violin_plot_table_multi(
             # do not have xlabels
 
         ax_error = plt.subplot(gs[ind], sharex=ax)
+        # ax_error.spines['top'].set_visible(False)
+        ax_error.spines["right"].set_visible(False)
+        ax_error.spines["left"].set_visible(False)
+        ax_error.spines["bottom"].set_visible(False)
+        ax_error.tick_params(
+            left=False, labelleft=False, bottom=False, labelbottom=False
+        )
+
+        # Synchronize the x-limits with the main subplot
+        ax_error.set_xlim((0, len(vLabels)))
+        ax_error.set_ylim(0, 1)  # Assuming the upper subplot should have no y range
+        error_labels = r"\textit{MAE}"
+        error_labels += "\n"
+        error_labels += r"\textbf{RMSE}"
+        error_labels += "\n"
+        error_labels += r"\textrm{MaxE}"
+        error_labels += "\n"
+        error_labels += r"\textrm{MinE}"
+        if mcure is not None:
+            error_labels += "\n"
+            error_labels += r"\textrm{MCURE}"
+
+        subplot_title = r"\textbf{" + subplot_label + r"}"
+        subplot_title += r"(\textbf{" + str(non_null) + r"})" 
+        ax_error.set_title(subplot_title, pad=-4)
+
+        ax_error.annotate(
+            error_labels,
+            xy=(0, 1),  # Position at the vertical center of the narrow subplot
+            xytext=(0, 0.25),
+            color="black",
+            fontsize=f"{table_fontsize}",
+            ha="center",
+            va="center",
+        )
+        for idx, (x, y, text) in enumerate(annotations):
+            ax_error.annotate(
+                text,
+                xy=(x, 1),  # Position at the vertical center of the narrow subplot
+                # xytext=(0, 0),
+                xytext=(x, 0.25),
+                color="black",
+                fontsize=f"{table_fontsize}",
+                ha="center",
+                va="center",
+            )
+
+    if plt_title is not None:
+        plt.title(f"{plt_title}")
+    fig.subplots_adjust(bottom=bottom)
+    ext = "png"
+    if len(output_filename.split(".")) > 1:
+        output_basename, ext = (
+            ".".join(output_filename.split(".")[:-1]),
+            output_filename.split(".")[-1],
+        )
+    path = f"{output_basename}_violin.{ext}"
+    print(f"{path}")
+    plt.savefig(
+        path,
+        transparent=transparent,
+        bbox_inches="tight",
+        dpi=dpi,
+    )
+    plt.clf()
+    return
+
+def violin_plot_table_multi_horizontal(
+    dfs,
+    df_labels_and_columns: {},
+    output_filename: str,
+    plt_title: str = None,
+    bottom: float = 0.4,
+    transparent: bool = False,
+    widths: float = 0.85,
+    figure_size: tuple = None,
+    set_xlable=False,
+    x_label_rotation=90,
+    x_label_fontsize=8,
+    table_fontsize=8,
+    ylabel=r"Error (kcal$\cdot$mol$^{-1}$)",
+    dpi=600,
+    usetex=True,
+    rcParams={
+        "text.usetex": True,
+        "font.family": "sans-serif",
+        "font.sans-serif": "Helvetica",
+        "mathtext.fontset": "custom",
+    },
+    colors: list = None,
+    legend_loc="upper right",
+    grid_heights=None,
+    grid_widths=None,
+    mcure=None,
+) -> None:
+    """
+    Create a dataframe with columns of errors pre-computed for generating
+    violin plots with MAE, RMSE, and MaxAE displayed above each violin.
+
+    Args:
+        df: DataFrame with columns of errors
+        Example:
+        dfs = [
+            {"df": df_all, "label": "4569", "ylim": [-4, 2]},
+            {"df": df_subset, "label": "288", "ylim": [-2, 2]},
+        ]
+        df_labels_and_columns: Dictionary of plotted labels along with the df column for data
+        output_filename: Name of the output file
+        ylim: list =[-15, 35],
+        rcParams: can be set to None if latex is not used
+        colors: list of colors for each df column plotted. A default will alternate between blue and green.
+        mcure: If requested, must pre-compute MCURE for each df_labels_and_columns key and assign as a dictionary
+    """
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    from matplotlib import gridspec
+
+    ylabel_initial = ylabel
+
+    print(f"Plotting {output_filename}")
+    fig = plt.figure(dpi=dpi)
+    if figure_size is not None:
+        plt.figure(figsize=figure_size)
+    if grid_heights is None:
+        grid_heights = []
+        for i in range(len(dfs)):
+            grid_heights.append(0.6)
+            grid_heights.append(2)
+    print(len(dfs) * 2)
+
+    gs = gridspec.GridSpec(
+        2, len(dfs), height_ratios=grid_heights, width_ratios=grid_widths
+    )  # Adjust height ratios to change the size of subplots
+    if rcParams is not None:
+        plt.rcParams.update(rcParams)
+    vlabels_df = []
+    for ind_0, j in enumerate(dfs):
+        df = j["df"]
+        subplot_label = j["label"]
+        ylim = j["ylim"]
+        vLabels, vData = [], []
+        annotations = []  # [(x, y, text), ...]
+        cnt = 1
+        ind = 2 * ind_0
+        print(f"{ind = }, {subplot_label = }")
+        plt.rcParams["text.usetex"] = usetex
+        non_null = len(df)
+        for k, v in df_labels_and_columns.items():
+            if v not in df.columns:
+                print(f"{v} not found in df. Skipping...")
+                continue
+            df[v] = pd.to_numeric(df[v])
+            df_sub = df[df[v].notna()].copy()
+            vData.append(df_sub[v].to_list())
+            k_label = "\\textbf{" + k + "}"
+            k_label = convert_deltas(k_label)
+            vLabels.append(k_label)
+            m = df_sub[v].max()
+            rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
+            mae = df_sub[v].apply(lambda x: abs(x)).mean()
+            max_pos_error = df_sub[v].apply(lambda x: x).max()
+            max_neg_error = df_sub[v].apply(lambda x: x).min()
+            text = r"\textit{%.2f}" % mae
+            text += "\n"
+            text += r"\textbf{%.2f}" % rmse
+            text += "\n"
+            text += r"\textrm{%.2f}" % max_pos_error
+            text += "\n"
+            text += r"\textrm{%.2f}" % max_neg_error
+            if mcure is not None:
+                text += "\n"
+                text += r"\textrm{%.2f}" % mcure[k][ind_0]
+            annotations.append((cnt, m, text))
+            cnt += 1
+            tmp = df_sub[v].notna().sum()
+            if tmp < non_null:
+                non_null = tmp
+        vlabels_df.append(vLabels)
+
+        pd.set_option("display.max_columns", None)
+        ax = plt.subplot(
+            gs[ind_0 + len(dfs)]
+        )  # This will create the subplot for the main violin plot.
+        vplot = ax.violinplot(
+            vData,
+            showmeans=True,
+            showmedians=False,
+            showextrema=False,
+            quantiles=[[0.05, 0.95] for i in range(len(vData))],
+            widths=widths,
+        )
+        for n, partname in enumerate(["cmeans"]):
+            vp = vplot[partname]
+            vp.set_edgecolor("black")
+            vp.set_linewidth(1)
+            vp.set_alpha(1)
+        quantile_color = "red"
+        quantile_style = "-"
+        quantile_linewidth = 0.8
+        for n, partname in enumerate(["cquantiles"]):
+            vp = vplot[partname]
+            vp.set_edgecolor(quantile_color)
+            vp.set_linewidth(quantile_linewidth)
+            vp.set_linestyle(quantile_style)
+            vp.set_alpha(1)
+
+        colors = ["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))]
+        for n, pc in enumerate(vplot["bodies"], 1):
+            pc.set_facecolor(colors[n - 1])
+            pc.set_alpha(0.6)
+
+        vLabels.insert(0, "")
+        xs = [i for i in range(len(vLabels))]
+        xs_error = [i for i in range(-1, len(vLabels) + 1)]
+        ax.plot(
+            xs_error,
+            [1 for i in range(len(xs_error))],
+            "k--",
+            label=r"$\pm$1 $\mathrm{kcal\cdot mol^{-1}}$",
+            zorder=0,
+            linewidth=0.6,
+        )
+        ax.plot(
+            xs_error,
+            [0 for i in range(len(xs_error))],
+            "k--",
+            linewidth=0.5,
+            alpha=0.5,
+            # label=r"Reference Energy",
+            zorder=0,
+        )
+        ax.plot(
+            xs_error,
+            [-1 for i in range(len(xs_error))],
+            "k--",
+            zorder=0,
+            linewidth=0.6,
+        )
+        ax.plot(
+            [],
+            [],
+            linestyle=quantile_style,
+            color=quantile_color,
+            linewidth=quantile_linewidth,
+            label=r"5-95th Percentile",
+        )
+        navy_blue = (0.0, 0.32, 0.96)
+        ax.set_xticks(xs)
+        plt.setp(
+            ax.set_xticklabels(vLabels),
+            rotation=x_label_rotation,
+            fontsize=x_label_fontsize,
+        )
+        ax.set_xlim((0, len(vLabels)))
+        if ylim is not None:
+            ax.set_ylim(ylim)
+            minor_yticks = create_minor_y_ticks(ylim)
+            print(f"{minor_yticks = }")
+            ax.set_yticks(minor_yticks, minor=True)
+            ax.grid(which='minor', axis='y', color='black', linestyle=':')
+
+        if ind == 0:
+            lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
+
+        if set_xlable:
+            ax.set_xlabel("Level of Theory", color="k")
+        # ax.set_ylabel(f"{subplot_label}\n{ylabel_initial}", color="k")
+        ax.set_ylabel(f"{ylabel_initial}", color="k")
+
+        ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
+        ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
+        for n, xtick in enumerate(ax.get_xticklabels()):
+            xtick.set_color(colors[n - 1])
+            xtick.set_alpha(0.8)
+
+
+        ax_error = plt.subplot(gs[ind_0], sharex=ax)
         # ax_error.spines['top'].set_visible(False)
         ax_error.spines["right"].set_visible(False)
         ax_error.spines["left"].set_visible(False)
@@ -945,6 +1225,7 @@ def violin_plot_table_multi_SAPT_components(
             if ylim is not None:
                 ax.set_ylim(ylim)
                 minor_yticks = create_minor_y_ticks(ylim)
+                print(minor_yticks)
                 ax.set_yticks(minor_yticks, minor=True)
 
             if ind == 0 and nn == 3:
