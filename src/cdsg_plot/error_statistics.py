@@ -17,8 +17,9 @@ def create_minor_y_ticks(ylim):
     while upper_bound % inc != 0:
         upper_bound += 1
     upper_bound += inc
-    minor_yticks = np.arange(lower_bound, upper_bound, inc)
-    return minor_yticks
+    major_yticks = np.arange(lower_bound, upper_bound, inc)
+    minor_yticks = np.arange(lower_bound, upper_bound, inc/2)[:-1]
+    return major_yticks, minor_yticks
 
 
 def violin_plot(
@@ -165,7 +166,8 @@ def violin_plot(
     ax.set_xlim((0, len(vLabels)))
     if ylim is not None:
         ax.set_ylim(ylim)
-        minor_yticks = create_minor_y_ticks(ylim)
+        major_yticks, minor_yticks = create_minor_y_ticks(ylim)
+        ax.set_yticks(major_yticks)
         ax.set_yticks(minor_yticks, minor=True)
 
     lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
@@ -175,7 +177,6 @@ def violin_plot(
     ax.set_ylabel(ylabel, color="k")
 
     ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
-    ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
     # Annotations of RMSE
     for x, y, text in annotations:
         ax.annotate(
@@ -366,7 +367,8 @@ def violin_plot_table(
     ax.set_xlim((0, len(vLabels)))
     if ylim is not None:
         ax.set_ylim(ylim)
-        minor_yticks = create_minor_y_ticks(ylim)
+        major_yticks, minor_yticks = create_minor_y_ticks(ylim)
+        ax.set_yticks(major_yticks)
         ax.set_yticks(minor_yticks, minor=True)
 
     lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
@@ -376,7 +378,6 @@ def violin_plot_table(
     ax.set_ylabel(ylabel, color="k")
 
     ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
-    ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
     for n, xtick in enumerate(ax.get_xticklabels()):
         xtick.set_color(colors[n - 1])
         xtick.set_alpha(0.8)
@@ -627,10 +628,9 @@ def violin_plot_table_multi(
         ax.set_xlim((0, len(vLabels)))
         if ylim is not None:
             ax.set_ylim(ylim)
-            minor_yticks = create_minor_y_ticks(ylim)
-            print(f"{minor_yticks = }")
+            major_yticks, minor_yticks = create_minor_y_ticks(ylim)
+            ax.set_yticks(major_yticks)
             ax.set_yticks(minor_yticks, minor=True)
-            ax.grid(which='minor', axis='y', color='black', linestyle=':')
 
         if ind == 0:
             lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
@@ -641,7 +641,6 @@ def violin_plot_table_multi(
         ax.set_ylabel(f"{ylabel_initial}", color="k")
 
         ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
-        ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
         for n, xtick in enumerate(ax.get_xticklabels()):
             xtick.set_color(colors[n - 1])
             xtick.set_alpha(0.8)
@@ -917,10 +916,9 @@ def violin_plot_table_multi_horizontal(
         ax.set_xlim((0, len(vLabels)))
         if ylim is not None:
             ax.set_ylim(ylim)
-            minor_yticks = create_minor_y_ticks(ylim)
-            print(f"{minor_yticks = }")
+            major_yticks, minor_yticks = create_minor_y_ticks(ylim)
+            ax.set_yticks(major_yticks)
             ax.set_yticks(minor_yticks, minor=True)
-            ax.grid(which='minor', axis='y', color='black', linestyle=':')
 
         if ind == 0:
             lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
@@ -931,7 +929,6 @@ def violin_plot_table_multi_horizontal(
         ax.set_ylabel(f"{ylabel_initial}", color="k")
 
         ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
-        ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
         for n, xtick in enumerate(ax.get_xticklabels()):
             xtick.set_color(colors[n - 1])
             xtick.set_alpha(0.8)
@@ -1224,8 +1221,8 @@ def violin_plot_table_multi_SAPT_components(
             ax.set_xlim((0, len(vLabels)))
             if ylim is not None:
                 ax.set_ylim(ylim)
-                minor_yticks = create_minor_y_ticks(ylim)
-                print(minor_yticks)
+                major_yticks, minor_yticks = create_minor_y_ticks(ylim)
+                ax.set_yticks(major_yticks)
                 ax.set_yticks(minor_yticks, minor=True)
 
             if ind == 0 and nn == 3:
@@ -1240,7 +1237,7 @@ def violin_plot_table_multi_SAPT_components(
                 ax.set_ylabel(ylabel_row, color="k")
 
             ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
-            ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
+            # ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
             for n, xtick in enumerate(ax.get_xticklabels()):
                 xtick.set_color(colors[n - 1])
                 xtick.set_alpha(0.8)
