@@ -1108,9 +1108,13 @@ def violin_plot_table_multi_SAPT_components(
             ind = ind_0 * 2
             plt.rcParams["text.usetex"] = usetex
             non_null = len(df)
+            print(f"{j['basis']}, {non_null = }")
             for k, v in df_labels_and_columns.items():
                 df[v] = pd.to_numeric(df[v])
                 df_sub = df[df[v].notna()].copy()
+                if len(df_sub) != len(df):
+                    print('Missing data in', k, v)
+                    print(df[['system_id', v]])
                 vData.append(df_sub[v].to_list())
                 k_label = "\\textbf{" + k + "}"
                 k_label = convert_deltas(k_label)
