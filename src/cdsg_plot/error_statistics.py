@@ -468,6 +468,7 @@ def violin_plot_table_multi(
     grid_heights=None,
     grid_widths=None,
     mcure=None,
+    error_labels_position=(0, 0.25),
 ) -> None:
     """
     Create a dataframe with columns of errors pre-computed for generating
@@ -688,7 +689,7 @@ def violin_plot_table_multi(
         ax_error.annotate(
             error_labels,
             xy=(0, 1),  # Position at the vertical center of the narrow subplot
-            xytext=(0, 0.25),
+            xytext=error_labels_position,
             color="black",
             fontsize=f"{table_fontsize}",
             ha="center",
