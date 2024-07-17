@@ -1091,10 +1091,10 @@ def violin_plot_table_multi_SAPT_components(
             sapt_color = 'red'
         elif nn == 1:
             df_labels_and_columns = df_labels_and_columns_exch
-            sapt_color = 'blue'
+            sapt_color = 'green'
         elif nn == 2:
             df_labels_and_columns = df_labels_and_columns_indu
-            sapt_color = 'green'
+            sapt_color = 'blue'
         elif nn == 3:
             df_labels_and_columns = df_labels_and_columns_disp
             sapt_color = 'orange'
