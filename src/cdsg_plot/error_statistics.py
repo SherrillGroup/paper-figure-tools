@@ -527,7 +527,10 @@ def violin_plot_table_multi(
         for k, v in df_labels_and_columns.items():
             df[v] = pd.to_numeric(df[v])
             df_sub = df[df[v].notna()].copy()
-            vData.append(df_sub[v].to_list())
+            local_value = df_sub[v].to_list()
+            if len(local_value) == 0:
+                local_value = [0] * len(vData[-1])
+            vData.append(local_value)
             k_label = "\\textbf{" + k + "}"
             k_label = convert_deltas(k_label)
             vLabels.append(k_label)
@@ -549,7 +552,7 @@ def violin_plot_table_multi(
             annotations.append((cnt, m, text))
             cnt += 1
             tmp = df_sub[v].notna().sum()
-            if tmp < non_null:
+            if tmp < non_null and tmp != 0:
                 non_null = tmp
 
         pd.set_option("display.max_columns", None)
@@ -1110,13 +1113,31 @@ def violin_plot_table_multi_SAPT_components(
             plt.rcParams["text.usetex"] = usetex
             non_null = len(df)
             print(f"{j['basis']}, {non_null = }")
+# -            vData.append(df_sub[v].to_list())
+# +            local_value = df_sub[v].to_list()
+# +            if len(local_value) == 0:
+# +                local_value = [0] * len(vData[-1])
+# +            vData.append(local_value)
+#              k_label = "\\textbf{" + k + "}"
+#              k_label = convert_deltas(k_label)
+#              vLabels.append(k_label)
+# @@ -549,7 +552,7 @@ def violin_plot_table_multi(
+#              annotations.append((cnt, m, text))
+#              cnt += 1
+#              tmp = df_sub[v].notna().sum()
+# -            if tmp < non_null:
+# +            if tmp < non_null and tmp != 0:
+#                  non_null = tmp
             for k, v in df_labels_and_columns.items():
                 df[v] = pd.to_numeric(df[v])
                 df_sub = df[df[v].notna()].copy()
                 if len(df_sub) != len(df):
                     print('Missing data in', k, v)
                     print(df[['system_id', v]])
-                vData.append(df_sub[v].to_list())
+                local_value = df_sub[v].to_list()
+                if len(local_value) == 0:
+                    local_value = [0] * len(vData[-1])
+                vData.append(local_value)
                 k_label = "\\textbf{" + k + "}"
                 k_label = convert_deltas(k_label)
                 vLabels.append(k_label)
@@ -1138,7 +1159,7 @@ def violin_plot_table_multi_SAPT_components(
                 annotations.append((cnt, m, text))
                 cnt += 1
                 tmp = df_sub[v].notna().sum()
-                if tmp < non_null:
+                if tmp < non_null and tmp != 0:
                     non_null = tmp
 
             pd.set_option("display.max_columns", None)
