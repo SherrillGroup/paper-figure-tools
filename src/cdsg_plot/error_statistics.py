@@ -1155,7 +1155,13 @@ def violin_plot_table_multi_SAPT_components(
                 text += r"\textrm{%.2f}" % max_neg_error
                 if mcure is not None:
                     text += "\n"
-                    text += r"\textrm{%.2f}" % mcure[term][k][ind_0]
+                    try:
+                        text += r"\textrm{%.2f}" % mcure[term][k][ind_0]
+                    except (Exception) as e:
+                        print(f"Error: {e}")
+                        print(f"term: {term}, k: {k}, ind_0: {ind_0}")
+                        import sys
+                        sys.exit(1)
                 annotations.append((cnt, m, text))
                 cnt += 1
                 tmp = df_sub[v].notna().sum()
