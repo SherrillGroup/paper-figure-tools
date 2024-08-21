@@ -1081,6 +1081,8 @@ def violin_plot_table_multi_SAPT_components(
     if grid_widths is None:
         grid_widths = [1, 1, 1, 2]
     print(len(dfs) * 2)
+    columns = 0
+
 
     gs = gridspec.GridSpec(
         len(dfs) * 2, 4, height_ratios=grid_heights, width_ratios=grid_widths,
