@@ -224,7 +224,7 @@ def violin_plot_table(
     transparent: bool = False,
     widths: float = 0.85,
     figure_size: tuple = None,
-    set_xlable=False,
+    set_xlabel=False,
     x_label_rotation=90,
     x_label_fontsize=8,
     table_fontsize=8,
@@ -373,7 +373,7 @@ def violin_plot_table(
 
     lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
 
-    if set_xlable:
+    if set_xlabel:
         ax.set_xlabel("Level of Theory", color="k")
     ax.set_ylabel(ylabel, color="k")
 
