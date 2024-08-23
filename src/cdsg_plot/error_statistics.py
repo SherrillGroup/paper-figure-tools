@@ -469,6 +469,7 @@ def violin_plot_table_multi(
     grid_widths=None,
     mcure=None,
     error_labels_position=(0, 0.25),
+    violin_alpha=0.6,
 ) -> None:
     """
     Create a dataframe with columns of errors pre-computed for generating
@@ -582,10 +583,11 @@ def violin_plot_table_multi(
             vp.set_linestyle(quantile_style)
             vp.set_alpha(1)
 
-        colors = ["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))]
+        if colors is None:
+            colors = ["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))]
         for n, pc in enumerate(vplot["bodies"], 1):
             pc.set_facecolor(colors[n - 1])
-            pc.set_alpha(0.6)
+            pc.set_alpha(violin_alpha)
 
         vLabels.insert(0, "")
         xs = [i for i in range(len(vLabels))]
@@ -647,7 +649,8 @@ def violin_plot_table_multi(
         ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
         for n, xtick in enumerate(ax.get_xticklabels()):
             xtick.set_color(colors[n - 1])
-            xtick.set_alpha(0.8)
+            # xtick.set_alpha(0.8)
+            xtick.set_alpha(violin_alpha)
 
         if ind != len(dfs) * 2 - 2:
             # ax.spines["bottom"].set_visible(False)
