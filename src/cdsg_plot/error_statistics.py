@@ -1085,25 +1085,38 @@ def violin_plot_table_multi_SAPT_components(
         grid_widths = [1, 1, 1, 2]
     print(len(dfs) * 2)
     columns = 0
+    sapt_terms_plot = [] 
+    if len(df_labels_and_columns_elst) > 0:
+        columns += 1
+        sapt_terms_plot.append("ELST")
+    if len(df_labels_and_columns_exch) > 0:
+        columns += 1
+        sapt_terms_plot.append("EXCH")
+    if len(df_labels_and_columns_indu) > 0:
+        columns += 1
+        sapt_terms_plot .append("INDU")
+    if len(df_labels_and_columns_disp) > 0:
+        columns += 1
+        sapt_terms_plot.append("DISP")
 
 
     gs = gridspec.GridSpec(
-        len(dfs) * 2, 4, height_ratios=grid_heights, width_ratios=grid_widths,
+        len(dfs) * 2, columns, height_ratios=grid_heights, width_ratios=grid_widths,
     )  # Adjust height ratios to change the size of subplots
     print(f"{gs = }")
     if rcParams is not None:
         plt.rcParams.update(rcParams)
-    for nn, term in enumerate(['ELST', 'EXCH', 'IND', 'DISP']):
-        if nn == 0:
+    for nn, term in enumerate(sapt_terms_plot):
+        if term == "ELST":
             df_labels_and_columns = df_labels_and_columns_elst
             sapt_color = 'red'
-        elif nn == 1:
+        elif term == "EXCH":
             df_labels_and_columns = df_labels_and_columns_exch
             sapt_color = 'green'
-        elif nn == 2:
+        elif term == "INDU":
             df_labels_and_columns = df_labels_and_columns_indu
             sapt_color = 'blue'
-        elif nn == 3:
+        elif term == "DISP":
             df_labels_and_columns = df_labels_and_columns_disp
             sapt_color = 'orange'
         print(f"{term = }")
