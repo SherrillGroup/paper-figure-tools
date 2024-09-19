@@ -224,7 +224,7 @@ def violin_plot_table(
     transparent: bool = False,
     widths: float = 0.85,
     figure_size: tuple = None,
-    set_xlable=False,
+    set_xlabel=False,
     x_label_rotation=90,
     x_label_fontsize=8,
     table_fontsize=8,
@@ -373,7 +373,7 @@ def violin_plot_table(
 
     lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
 
-    if set_xlable:
+    if set_xlabel:
         ax.set_xlabel("Level of Theory", color="k")
     ax.set_ylabel(ylabel, color="k")
 
@@ -469,6 +469,7 @@ def violin_plot_table_multi(
     grid_widths=None,
     mcure=None,
     error_labels_position=(0, 0.25),
+    violin_alpha=0.6,
 ) -> None:
     """
     Create a dataframe with columns of errors pre-computed for generating
@@ -587,10 +588,11 @@ def violin_plot_table_multi(
             vp.set_linestyle(quantile_style)
             vp.set_alpha(1)
 
-        colors = ["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))]
+        if colors is None:
+            colors = ["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))]
         for n, pc in enumerate(vplot["bodies"], 1):
             pc.set_facecolor(colors[n - 1])
-            pc.set_alpha(0.6)
+            pc.set_alpha(violin_alpha)
 
         vLabels.insert(0, "")
         xs = [i for i in range(len(vLabels))]
@@ -652,7 +654,8 @@ def violin_plot_table_multi(
         ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
         for n, xtick in enumerate(ax.get_xticklabels()):
             xtick.set_color(colors[n - 1])
-            xtick.set_alpha(0.8)
+            # xtick.set_alpha(0.8)
+            xtick.set_alpha(violin_alpha)
 
         if ind != len(dfs) * 2 - 2:
             # ax.spines["bottom"].set_visible(False)
@@ -1086,24 +1089,39 @@ def violin_plot_table_multi_SAPT_components(
     if grid_widths is None:
         grid_widths = [1, 1, 1, 2]
     print(len(dfs) * 2)
+    columns = 0
+    sapt_terms_plot = [] 
+    if len(df_labels_and_columns_elst) > 0:
+        columns += 1
+        sapt_terms_plot.append("ELST")
+    if len(df_labels_and_columns_exch) > 0:
+        columns += 1
+        sapt_terms_plot.append("EXCH")
+    if len(df_labels_and_columns_indu) > 0:
+        columns += 1
+        sapt_terms_plot .append("INDU")
+    if len(df_labels_and_columns_disp) > 0:
+        columns += 1
+        sapt_terms_plot.append("DISP")
+
 
     gs = gridspec.GridSpec(
-        len(dfs) * 2, 4, height_ratios=grid_heights, width_ratios=grid_widths,
+        len(dfs) * 2, columns, height_ratios=grid_heights, width_ratios=grid_widths,
     )  # Adjust height ratios to change the size of subplots
     print(f"{gs = }")
     if rcParams is not None:
         plt.rcParams.update(rcParams)
-    for nn, term in enumerate(['ELST', 'EXCH', 'IND', 'DISP']):
-        if nn == 0:
+    for nn, term in enumerate(sapt_terms_plot):
+        if term == "ELST":
             df_labels_and_columns = df_labels_and_columns_elst
             sapt_color = 'red'
-        elif nn == 1:
+        elif term == "EXCH":
             df_labels_and_columns = df_labels_and_columns_exch
             sapt_color = 'green'
-        elif nn == 2:
+        elif term == "INDU":
             df_labels_and_columns = df_labels_and_columns_indu
             sapt_color = 'blue'
-        elif nn == 3:
+        elif term == "DISP":
             df_labels_and_columns = df_labels_and_columns_disp
             sapt_color = 'orange'
         print(f"{term = }")
