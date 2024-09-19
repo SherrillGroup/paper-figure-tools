@@ -529,7 +529,7 @@ def violin_plot_table_multi(
             df_sub = df[df[v].notna()].copy()
             local_value = df_sub[v].to_list()
             if len(local_value) == 0:
-                local_value = [0] * len(vData[-1])
+                local_value = [0] 
             vData.append(local_value)
             k_label = "\\textbf{" + k + "}"
             k_label = convert_deltas(k_label)
@@ -554,6 +554,11 @@ def violin_plot_table_multi(
             tmp = df_sub[v].notna().sum()
             if tmp < non_null and tmp != 0:
                 non_null = tmp
+        size = max([len(i) for i in vData])
+        for n, i in enumerate(vData):
+            if i == [0]:
+                vData[n] = [0 for i in range(size)]
+
 
         pd.set_option("display.max_columns", None)
         ax = plt.subplot(
