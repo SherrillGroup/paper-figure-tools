@@ -75,7 +75,7 @@ def violin_plot(
         df_sub = df[df[v].notna()].copy()
         vData.append(df_sub[v].to_list())
         k_label = "\\textbf{" + k + "}"
-        k_label = convert_deltas(k_label)
+        k_label = convert_deltas_ssapt0(k_label)
         vLabels.append(k_label)
         m = df_sub[v].max()
         rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -269,7 +269,7 @@ def violin_plot_table(
         df_sub = df[df[v].notna()].copy()
         vData.append(df_sub[v].to_list())
         k_label = "\\textbf{" + k + "}"
-        k_label = convert_deltas(k_label)
+        k_label = convert_deltas_ssapt0(k_label)
         vLabels.append(k_label)
         m = df_sub[v].max()
         rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -533,7 +533,7 @@ def violin_plot_table_multi(
                 local_value = [0] * len(vData[-1])
             vData.append(local_value)
             k_label = "\\textbf{" + k + "}"
-            k_label = convert_deltas(k_label)
+            k_label = convert_deltas_ssapt0(k_label)
             vLabels.append(k_label)
             m = df_sub[v].max()
             rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -822,7 +822,7 @@ def violin_plot_table_multi_horizontal(
             df_sub = df[df[v].notna()].copy()
             vData.append(df_sub[v].to_list())
             k_label = "\\textbf{" + k + "}"
-            k_label = convert_deltas(k_label)
+            k_label = convert_deltas_ssapt0(k_label)
             vLabels.append(k_label)
             m = df_sub[v].max()
             rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
@@ -1009,8 +1009,8 @@ def violin_plot_table_multi_horizontal(
     plt.clf()
     return
 
-def convert_deltas(k_label):
-    k_label = k_label.replace("DMP2", f"$\delta$MP2")
+def convert_deltas_ssapt0(k_label):
+    k_label = k_label.replace("DMP2", r"$\delta$MP2").replace("SSAPT0", r"\emph{s}SAPT0")
     return k_label
 
 def violin_plot_table_multi_SAPT_components(
@@ -1157,7 +1157,7 @@ def violin_plot_table_multi_SAPT_components(
                     local_value = [0] * len(vData[-1])
                 vData.append(local_value)
                 k_label = "\\textbf{" + k + "}"
-                k_label = convert_deltas(k_label)
+                k_label = convert_deltas_ssapt0(k_label)
                 vLabels.append(k_label)
                 m = df_sub[v].max()
                 rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
