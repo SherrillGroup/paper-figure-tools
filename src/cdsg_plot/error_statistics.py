@@ -202,7 +202,9 @@ def violin_plot(
             ".".join(output_filename.split(".")[:-1]),
             output_filename.split(".")[-1],
         )
-    path = f"{output_basename}_violin.{ext}"
+        path = f"{output_basename}_violin.{ext}"
+    else:
+        path = output_filename
     print(f"{path}")
     plt.savefig(
         path,
@@ -1019,6 +1021,7 @@ def violin_plot_table_multi_SAPT_components(
     df_labels_and_columns_exch: {},
     df_labels_and_columns_indu: {},
     df_labels_and_columns_disp: {},
+    df_labels_and_columns_total: {},
     output_filename: str,
     plt_title: str = None,
     bottom: float = 0.4,
@@ -1043,6 +1046,7 @@ def violin_plot_table_multi_SAPT_components(
     grid_heights=None,
     grid_widths=None,
     mcure=None,
+    wspace=None,
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1098,11 +1102,16 @@ def violin_plot_table_multi_SAPT_components(
     if len(df_labels_and_columns_disp) > 0:
         columns += 1
         sapt_terms_plot.append("DISP")
+    if len(df_labels_and_columns_total) > 0:
+        columns += 1
+        sapt_terms_plot.append("TOTAL")
 
 
     gs = gridspec.GridSpec(
         len(dfs) * 2, columns, height_ratios=grid_heights, width_ratios=grid_widths,
     )  # Adjust height ratios to change the size of subplots
+    if wspace is not None:
+        gs.update(wspace=wspace)
     print(f"{gs = }")
     if rcParams is not None:
         plt.rcParams.update(rcParams)
@@ -1119,6 +1128,9 @@ def violin_plot_table_multi_SAPT_components(
         elif term == "DISP":
             df_labels_and_columns = df_labels_and_columns_disp
             sapt_color = 'orange'
+        elif term == "TOTAL":
+            df_labels_and_columns = df_labels_and_columns_total
+            sapt_color = 'black'
         print(f"{term = }")
         for ind_0, j in enumerate(dfs):
             df = j["df"]
@@ -1171,7 +1183,7 @@ def violin_plot_table_multi_SAPT_components(
                 text += r"\textrm{%.2f}" % max_pos_error
                 text += "\n"
                 text += r"\textrm{%.2f}" % max_neg_error
-                if mcure is not None:
+                if mcure is not None and term != "TOTAL":
                     text += "\n"
                     try:
                         text += r"\textrm{%.2f}" % mcure[term][k][ind_0]
