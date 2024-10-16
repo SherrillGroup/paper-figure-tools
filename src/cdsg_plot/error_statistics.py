@@ -1017,12 +1017,12 @@ def convert_deltas_ssapt0(k_label):
 
 def violin_plot_table_multi_SAPT_components(
     dfs,
-    df_labels_and_columns_elst: {},
-    df_labels_and_columns_exch: {},
-    df_labels_and_columns_indu: {},
-    df_labels_and_columns_disp: {},
-    df_labels_and_columns_total: {},
-    output_filename: str,
+    df_labels_and_columns_elst={},
+    df_labels_and_columns_exch={},
+    df_labels_and_columns_indu={},
+    df_labels_and_columns_disp={},
+    df_labels_and_columns_total={},
+    output_filename: str = "output",
     plt_title: str = None,
     bottom: float = 0.4,
     transparent: bool = False,
@@ -1031,6 +1031,7 @@ def violin_plot_table_multi_SAPT_components(
     set_xlable=False,
     x_label_rotation=90,
     x_label_fontsize=8,
+    y_label_fontsize=8,
     table_fontsize=8,
     ylabel=r"Error (kcal$\cdot$mol$^{-1}$)",
     dpi=600,
@@ -1045,8 +1046,13 @@ def violin_plot_table_multi_SAPT_components(
     legend_loc="upper right",
     grid_heights=None,
     grid_widths=None,
+    MAE="textit",
+    RMSE="textbf",
+    MaxE="textrm",
+    MinE="textrm",
     mcure=None,
     wspace=None,
+    annotations_texty=0.4,
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1176,22 +1182,24 @@ def violin_plot_table_multi_SAPT_components(
                 mae = df_sub[v].apply(lambda x: abs(x)).mean()
                 max_pos_error = df_sub[v].apply(lambda x: x).max()
                 max_neg_error = df_sub[v].apply(lambda x: x).min()
-                text = r"\textit{%.2f}" % mae
-                text += "\n"
-                text += r"\textbf{%.2f}" % rmse
-                text += "\n"
-                text += r"\textrm{%.2f}" % max_pos_error
-                text += "\n"
-                text += r"\textrm{%.2f}" % max_neg_error
+                errors_ls = []
+                if MAE:
+                    errors_ls.append(rf"\{MAE}{{{mae:.2f}}}")
+                if RMSE:
+                    errors_ls.append(rf"\{RMSE}{{{rmse:.2f}}}")
+                if MaxE:
+                    errors_ls.append(rf"\{MaxE}{{{max_pos_error:.2f}}}")
+                if MinE:
+                    errors_ls.append(rf"\{MinE}{{{max_neg_error:.2f}}}")
                 if mcure is not None and term != "TOTAL":
-                    text += "\n"
                     try:
-                        text += r"\textrm{%.2f}" % mcure[term][k][ind_0]
+                        errors_ls.append(r"\textrm{%.2f}" % mcure[term][k][ind_0])
                     except (Exception) as e:
                         print(f"Error: {e}")
                         print(f"term: {term}, k: {k}, ind_0: {ind_0}")
                         import sys
                         sys.exit(1)
+                text = "\n".join(errors_ls)
                 annotations.append((cnt, m, text))
                 cnt += 1
                 tmp = df_sub[v].notna().sum()
@@ -1296,7 +1304,7 @@ def violin_plot_table_multi_SAPT_components(
             if nn == 0:
                 ylabel_row = r"\textbf{" + subplot_label + r"}"
                 ylabel_row += r"(\textbf{" + str(non_null) + r"})" f"\n{ylabel_initial}"
-                ax.set_ylabel(ylabel_row, color="k")
+                ax.set_ylabel(ylabel_row, color="k", fontsize=y_label_fontsize)
 
             ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
             # ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
@@ -1324,16 +1332,19 @@ def violin_plot_table_multi_SAPT_components(
             # Synchronize the x-limits with the main subplot
             ax_error.set_xlim((0, len(vLabels)))
             ax_error.set_ylim(0, 1)  # Assuming the upper subplot should have no y range
-            error_labels = r"\textit{MAE}"
-            error_labels += "\n"
-            error_labels += r"\textbf{RMSE}"
-            error_labels += "\n"
-            error_labels += r"\textrm{MaxE}"
-            error_labels += "\n"
-            error_labels += r"\textrm{MinE}"
+            error_labels = []
+
+            if MAE:
+                error_labels.append(rf"\{MAE}{{MAE}}")
+            if RMSE:
+                error_labels.append(rf"\{RMSE}{{RMSE}}")
+            if MaxE:
+                error_labels.append(rf"\{MaxE}{{MaxE}}")
+            if MinE:
+                error_labels.append(rf"\{MinE}{{MinE}}")
             if mcure is not None:
-                error_labels += "\n"
-                error_labels += r"\textrm{MCURE}"
+                error_labels.append(rf"\textrm{{MCURE}}")
+            error_labels = "\n".join(error_labels)
 
             if ind == 0:
                 ax_error.spines['top'].set_visible(True)
@@ -1343,7 +1354,7 @@ def violin_plot_table_multi_SAPT_components(
             ax_error.annotate(
                 error_labels,
                 xy=(0, 1),  # Position at the vertical center of the narrow subplot
-                xytext=(0.0, 0.4),
+                xytext=(0.0, annotations_texty),
                 color="black",
                 fontsize=f"{table_fontsize}",
                 ha="right",
@@ -1354,7 +1365,7 @@ def violin_plot_table_multi_SAPT_components(
                     text,
                     xy=(x, 1),  # Position at the vertical center of the narrow subplot
                     # xytext=(0, 0),
-                    xytext=(x, 0.4),
+                    xytext=(x, annotations_texty),
                     color="black",
                     fontsize=f"{table_fontsize}",
                     ha="center",
