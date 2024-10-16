@@ -1033,6 +1033,7 @@ def violin_plot_table_multi_SAPT_components(
     x_label_fontsize=8,
     y_label_fontsize=8,
     table_fontsize=8,
+    title_fontsize=10,
     ylabel=r"Error (kcal$\cdot$mol$^{-1}$)",
     dpi=600,
     usetex=True,
@@ -1053,6 +1054,8 @@ def violin_plot_table_multi_SAPT_components(
     mcure=None,
     wspace=None,
     annotations_texty=0.4,
+    share_y_axis=False,
+    table_delimiter="",
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1116,6 +1119,7 @@ def violin_plot_table_multi_SAPT_components(
     gs = gridspec.GridSpec(
         len(dfs) * 2, columns, height_ratios=grid_heights, width_ratios=grid_widths,
     )  # Adjust height ratios to change the size of subplots
+    ax1 = None
     if wspace is not None:
         gs.update(wspace=wspace)
     print(f"{gs = }")
@@ -1164,7 +1168,7 @@ def violin_plot_table_multi_SAPT_components(
 # -            if tmp < non_null:
 # +            if tmp < non_null and tmp != 0:
 #                  non_null = tmp
-            for k, v in df_labels_and_columns.items():
+            for col_ind, (k, v) in enumerate(df_labels_and_columns.items()):
                 df[v] = pd.to_numeric(df[v])
                 df_sub = df[df[v].notna()].copy()
                 if len(df_sub) != len(df):
@@ -1183,17 +1187,18 @@ def violin_plot_table_multi_SAPT_components(
                 max_pos_error = df_sub[v].apply(lambda x: x).max()
                 max_neg_error = df_sub[v].apply(lambda x: x).min()
                 errors_ls = []
+                l_delim = table_delimiter if col_ind != len(df_labels_and_columns.keys()) - 1 else ""
                 if MAE:
-                    errors_ls.append(rf"\{MAE}{{{mae:.2f}}}")
+                    errors_ls.append(rf"\{MAE}{{{mae:.2f}}}{l_delim}")
                 if RMSE:
-                    errors_ls.append(rf"\{RMSE}{{{rmse:.2f}}}")
+                    errors_ls.append(rf"\{RMSE}{{{rmse:.2f}}}{l_delim}")
                 if MaxE:
-                    errors_ls.append(rf"\{MaxE}{{{max_pos_error:.2f}}}")
+                    errors_ls.append(rf"\{MaxE}{{{max_pos_error:.2f}}}{l_delim}")
                 if MinE:
-                    errors_ls.append(rf"\{MinE}{{{max_neg_error:.2f}}}")
+                    errors_ls.append(rf"\{MinE}{{{max_neg_error:.2f}}}{l_delim}")
                 if mcure is not None and term != "TOTAL":
                     try:
-                        errors_ls.append(r"\textrm{%.2f}" % mcure[term][k][ind_0])
+                        errors_ls.append(rf"\textrm{mcure[term][k][ind_0]:.2f}{l_delim}")
                     except (Exception) as e:
                         print(f"Error: {e}")
                         print(f"term: {term}, k: {k}, ind_0: {ind_0}")
@@ -1207,9 +1212,16 @@ def violin_plot_table_multi_SAPT_components(
                     non_null = tmp
 
             pd.set_option("display.max_columns", None)
-            ax = plt.subplot(
-                gs[ind+1, nn]
-            )  # This will create the subplot for the main violin plot.
+            if share_y_axis and ind != 0:
+                ax = plt.subplot(
+                    gs[ind+1, nn],
+                    sharey=ax1,
+                )
+            else:
+                ax = plt.subplot(
+                    gs[ind+1, nn]
+                )
+                ax1 = ax
             vplot = ax.violinplot(
                 vData,
                 showmeans=True,
@@ -1291,11 +1303,15 @@ def violin_plot_table_multi_SAPT_components(
             ax.set_xlim((0, len(vLabels)))
             if ylim is not None:
                 ax.set_ylim(ylim)
-                major_yticks, minor_yticks = create_minor_y_ticks(ylim)
-                ax.set_yticks(major_yticks)
-                ax.set_yticks(minor_yticks, minor=True)
+                if not share_y_axis or nn == 0:
+                    print(ind, nn, 'ylim')
+                    major_yticks, minor_yticks = create_minor_y_ticks(ylim)
+                    ax.set_yticks(major_yticks)
+                    ax.set_yticks(minor_yticks, minor=True)
+                else:
+                    ax.set_yticks([])
 
-            if ind == 0 and nn == 3:
+            if ind == 0 and nn == columns - 1:
                 lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
 
             if set_xlable:
@@ -1349,17 +1365,18 @@ def violin_plot_table_multi_SAPT_components(
             if ind == 0:
                 ax_error.spines['top'].set_visible(True)
                 subplot_title = r"\textbf{" + str(term) + r"}" 
-                ax_error.set_title(subplot_title, color=sapt_color, pad=-4)
+                ax_error.set_title(subplot_title, color=sapt_color, pad=-4, fontsize=title_fontsize)
 
-            ax_error.annotate(
-                error_labels,
-                xy=(0, 1),  # Position at the vertical center of the narrow subplot
-                xytext=(0.0, annotations_texty),
-                color="black",
-                fontsize=f"{table_fontsize}",
-                ha="right",
-                va="center",
-            )
+            if not share_y_axis or nn == 0:
+                ax_error.annotate(
+                    error_labels,
+                    xy=(0, 1),  # Position at the vertical center of the narrow subplot
+                    xytext=(0.0, annotations_texty),
+                    color="black",
+                    fontsize=f"{table_fontsize}",
+                    ha="right",
+                    va="center",
+                )
             for idx, (x, y, text) in enumerate(annotations):
                 ax_error.annotate(
                     text,
