@@ -1012,7 +1012,7 @@ def violin_plot_table_multi_horizontal(
     return
 
 def convert_deltas_ssapt0(k_label):
-    k_label = k_label.replace("DMP2", r"$\delta$MP2").replace("SSAPT0", r"\emph{s}SAPT0")
+    k_label = k_label.replace("DMP2", r"$\delta$MP2").replace("SSAPT0", r"\emph{s}SAPT0").replace("WB97", r"$\omega$B97")
     return k_label
 
 def violin_plot_table_multi_SAPT_components(
@@ -1063,6 +1063,7 @@ def violin_plot_table_multi_SAPT_components(
     quantile_linewidth = 0.8,
     pm_alpha=1.0,
     zero_alpha=0.5,
+    hide_ytick_label_edges=False,
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1188,7 +1189,8 @@ def violin_plot_table_multi_SAPT_components(
                 if len(local_value) == 0:
                     local_value = [0] * len(vData[-1])
                 vData.append(local_value)
-                k_label = "\\textbf{" + k + "}"
+                k_label = r"\noindent\textbf{" + r"}\\\textbf{".join(k.split(r"\\")) + "}"
+                # k_label = r"\noindent\textbf{" + k + "}"
                 k_label = convert_deltas_ssapt0(k_label)
                 vLabels.append(k_label)
                 m = df_sub[v].max()
@@ -1320,6 +1322,11 @@ def violin_plot_table_multi_SAPT_components(
                     major_yticks, minor_yticks = create_minor_y_ticks(ylim)
                     ax.set_yticks(major_yticks)
                     ax.set_yticks(minor_yticks, minor=True)
+                    if hide_ytick_label_edges:
+                        major_yticks = list(major_yticks)
+                        major_yticks[0] = ""
+                        major_yticks[-1] = ""
+
                     ax.set_yticklabels(
                         major_yticks,
                         fontsize=y_label_fontsize,
@@ -1327,7 +1334,7 @@ def violin_plot_table_multi_SAPT_components(
                 else:
                     ax.set_yticks([])
 
-            if ind == 0 and nn == columns - 1:
+            if ind == 0 and nn == columns - 1 and legend_loc is not None:
                 lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
 
             if set_xlable:
