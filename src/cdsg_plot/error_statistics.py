@@ -1056,6 +1056,13 @@ def violin_plot_table_multi_SAPT_components(
     annotations_texty=0.4,
     share_y_axis=False,
     table_delimiter="",
+    gridlines_linewidths=0.6,
+    violin_alphas=0.6,
+    quantile_color = "red",
+    quantile_style = "-",
+    quantile_linewidth = 0.8,
+    pm_alpha=1.0,
+    zero_alpha=0.5,
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1078,6 +1085,9 @@ def violin_plot_table_multi_SAPT_components(
                 "DISP": [],
             }
     """
+    colors_initialized = True
+    if colors is None:
+        colors_initialized = False
     import numpy as np
     import matplotlib.pyplot as plt
     import pandas as pd
@@ -1096,7 +1106,7 @@ def violin_plot_table_multi_SAPT_components(
             heights.append(2)
     if grid_widths is None:
         grid_widths = [1, 1, 1, 2]
-    print(len(dfs) * 2)
+    print(f"Must have {len(dfs) * 2} heights")
     columns = 0
     sapt_terms_plot = [] 
     if len(df_labels_and_columns_elst) > 0:
@@ -1235,9 +1245,6 @@ def violin_plot_table_multi_SAPT_components(
                 vp.set_edgecolor("black")
                 vp.set_linewidth(1)
                 vp.set_alpha(1)
-            quantile_color = "red"
-            quantile_style = "-"
-            quantile_linewidth = 0.8
             for n, partname in enumerate(["cquantiles"]):
                 vp = vplot[partname]
                 vp.set_edgecolor(quantile_color)
@@ -1245,10 +1252,13 @@ def violin_plot_table_multi_SAPT_components(
                 vp.set_linestyle(quantile_style)
                 vp.set_alpha(1)
 
-            colors = ["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))]
+            if not colors_initialized:
+                colors = [["blue" if i % 2 == 0 else "green" for i in range(len(vLabels))] for i in range(columns)]
+            else:
+                print(f"Term: {nn} colors {colors[nn]}")
             for n, pc in enumerate(vplot["bodies"], 1):
-                pc.set_facecolor(colors[n - 1])
-                pc.set_alpha(0.6)
+                pc.set_facecolor(colors[nn][n - 1])
+                pc.set_alpha(violin_alphas)
 
             vLabels.insert(0, "")
             xs = [i for i in range(len(vLabels))]
@@ -1259,14 +1269,15 @@ def violin_plot_table_multi_SAPT_components(
                 "k--",
                 label=r"$\pm$1 $\mathrm{kcal\cdot mol^{-1}}$",
                 zorder=0,
-                linewidth=0.6,
+                alpha=pm_alpha,
+                linewidth=gridlines_linewidths,
             )
             ax.plot(
                 xs_error,
                 [0 for i in range(len(xs_error))],
                 "k--",
-                linewidth=0.5,
-                alpha=0.5,
+                linewidth=gridlines_linewidths,
+                alpha=zero_alpha,
                 # label=r"Reference Energy",
                 zorder=0,
             )
@@ -1275,7 +1286,8 @@ def violin_plot_table_multi_SAPT_components(
                 [-1 for i in range(len(xs_error))],
                 "k--",
                 zorder=0,
-                linewidth=0.6,
+                alpha=pm_alpha,
+                linewidth=gridlines_linewidths,
             )
             ax.plot(
                 [],
@@ -1308,6 +1320,10 @@ def violin_plot_table_multi_SAPT_components(
                     major_yticks, minor_yticks = create_minor_y_ticks(ylim)
                     ax.set_yticks(major_yticks)
                     ax.set_yticks(minor_yticks, minor=True)
+                    ax.set_yticklabels(
+                        major_yticks,
+                        fontsize=y_label_fontsize,
+                    )
                 else:
                     ax.set_yticks([])
 
@@ -1325,7 +1341,7 @@ def violin_plot_table_multi_SAPT_components(
             ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
             # ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
             for n, xtick in enumerate(ax.get_xticklabels()):
-                xtick.set_color(colors[n - 1])
+                xtick.set_color(colors[nn][n - 1])
                 xtick.set_alpha(0.8)
 
             if ind != len(dfs) * 2 - 2:
