@@ -1173,7 +1173,7 @@ def violin_plot_table_multi_SAPT_components(
             ind = ind_0 * 2
             plt.rcParams["text.usetex"] = usetex
             non_null = len(df)
-            print(f"{j['basis']}, {non_null = }")
+            # print(f"{j['basis']}, {non_null = }")
 # -            vData.append(df_sub[v].to_list())
 # +            local_value = df_sub[v].to_list()
 # +            if len(local_value) == 0:
@@ -1268,7 +1268,10 @@ def violin_plot_table_multi_SAPT_components(
             else:
                 print(f"Term: {nn} colors {colors[nn]}")
             for n, pc in enumerate(vplot["bodies"], 1):
-                pc.set_facecolor(colors[nn][n - 1])
+                try:
+                    pc.set_facecolor(colors[nn][n - 1])
+                except IndexError:
+                    pc.set_facecolor('pink')
                 pc.set_alpha(violin_alphas)
 
             vLabels.insert(0, "")
@@ -1357,7 +1360,10 @@ def violin_plot_table_multi_SAPT_components(
             ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
             # ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
             for n, xtick in enumerate(ax.get_xticklabels()):
-                xtick.set_color(colors[nn][n - 1])
+                try:
+                    xtick.set_color(colors[nn][n - 1])
+                except IndexError:
+                    xtick.set_color('pink')
                 xtick.set_alpha(0.8)
 
             if ind != len(dfs) * 2 - 2:
@@ -1561,7 +1567,7 @@ def violin_plot_table_multi_general(
             ind = ind_0 * 2
             plt.rcParams["text.usetex"] = usetex
             non_null = len(df)
-            print(f"{j['basis']}, {non_null = }")
+            # print(f"{j['basis']}, {non_null = }")
             for col_ind, (k, v) in enumerate(df_labels_and_columns.items()):
                 df[v] = pd.to_numeric(df[v])
                 df_sub = df[df[v].notna()].copy()
