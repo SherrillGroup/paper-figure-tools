@@ -1074,6 +1074,7 @@ def violin_plot_table_multi_SAPT_components(
     pm_alpha=1.0,
     zero_alpha=0.5,
     hide_ytick_label_edges=False,
+    add_title=True,
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1405,8 +1406,9 @@ def violin_plot_table_multi_SAPT_components(
 
             if ind == 0:
                 ax_error.spines['top'].set_visible(True)
-                subplot_title = r"\textbf{" + str(term) + r"}" 
-                ax_error.set_title(subplot_title, color=sapt_color, pad=-4, fontsize=title_fontsize)
+                if add_title:
+                    subplot_title = r"\textbf{" + str(term) + r"}"
+                    ax_error.set_title(subplot_title, color=sapt_color, pad=-4, fontsize=title_fontsize)
 
             if not share_y_axis or nn == 0:
                 x_pos = 0
