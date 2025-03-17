@@ -1384,7 +1384,10 @@ def violin_plot_table_multi_SAPT_components(
             )
 
             # Synchronize the x-limits with the main subplot
-            ax_error.set_xlim((0, len(vLabels)))
+            if share_y_axis:
+                ax.set_xlim((0.5, len(vLabels) - 0.5))
+            else:
+                ax.set_xlim((0, len(vLabels)))
             ax_error.set_ylim(0, 1)  # Assuming the upper subplot should have no y range
             error_labels = []
 
@@ -1406,10 +1409,15 @@ def violin_plot_table_multi_SAPT_components(
                 ax_error.set_title(subplot_title, color=sapt_color, pad=-4, fontsize=title_fontsize)
 
             if not share_y_axis or nn == 0:
+                x_pos = 0
+                x_pos_shift = 0
+                if share_y_axis:
+                    x_pos = 0.5
+                    x_pos_shift = -0.3
                 ax_error.annotate(
                     error_labels,
-                    xy=(0, 1),  # Position at the vertical center of the narrow subplot
-                    xytext=(0.0, annotations_texty),
+                    xy=(x_pos, 1),  # Position at the vertical center of the narrow subplot
+                    xytext=(x_pos + x_pos_shift, annotations_texty),
                     color="black",
                     fontsize=f"{table_fontsize}",
                     ha="right",
@@ -1438,6 +1446,9 @@ def violin_plot_table_multi_SAPT_components(
         )
     path = f"{output_basename}_violin.{ext}"
     print(f"{path}")
+    if share_y_axis:
+        # plt.subplots_adjust(hspace=0.1)
+        plt.subplots_adjust(wspace=0.05)
     plt.savefig(
         path,
         transparent=transparent,
@@ -1702,7 +1713,10 @@ def violin_plot_table_multi_general(
                 rotation=x_label_rotation,
                 fontsize=x_label_fontsize,
             )
-            ax.set_xlim((0, len(vLabels)))
+            if share_y_axis:
+                ax.set_xlim((0.5, len(vLabels) - 0.5))
+            else:
+                ax.set_xlim((0, len(vLabels)))
             if ylim is not None:
                 ax.set_ylim(ylim)
                 if not share_y_axis or nn == 0:
