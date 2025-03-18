@@ -882,6 +882,7 @@ def ternary(
     saveas=None,
     relpath=False,
     graphicsformat=["pdf"],
+    return_values=False,
 ):
     """Takes array of arrays *sapt* in form [elst, indc, disp] and builds formatted
     two-triangle ternary diagrams. Either fully-readable or dotsonly depending
@@ -1025,6 +1026,8 @@ def ternary(
     if view:
         plt.show()
     plt.close()
+    if return_values:
+        return files_saved, xvals, yvals, cvals
     return files_saved
 
 
