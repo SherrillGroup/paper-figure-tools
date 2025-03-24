@@ -1218,14 +1218,15 @@ def violin_plot_table_multi_SAPT_components(
                     errors_ls.append(rf"\{MaxE}{{{max_pos_error:.2f}}}{l_delim}")
                 if MinE:
                     errors_ls.append(rf"\{MinE}{{{max_neg_error:.2f}}}{l_delim}")
-                if mcure is not None and term != "TOTAL":
-                    try:
+                # if mcure is not None and term != "TOTAL":
+                if mcure is not None:
+                    # try:
                         errors_ls.append(rf"\textrm{mcure[term][k][ind_0]:.2f}{l_delim}")
-                    except (Exception) as e:
-                        print(f"Error: {e}")
-                        print(f"term: {term}, k: {k}, ind_0: {ind_0}")
-                        import sys
-                        sys.exit(1)
+                    # except (Exception) as e:
+                    #     print(f"Error: {e}")
+                    #     print(f"term: {term}, k: {k}, ind_0: {ind_0}")
+                    #     import sys
+                    #     sys.exit(1)
                 text = "\n".join(errors_ls)
                 annotations.append((cnt, m, text))
                 cnt += 1
@@ -1405,8 +1406,8 @@ def violin_plot_table_multi_SAPT_components(
             error_labels = "\n".join(error_labels)
 
             if ind == 0:
-                ax_error.spines['top'].set_visible(True)
                 if add_title:
+                    ax_error.spines['top'].set_visible(True)
                     subplot_title = r"\textbf{" + str(term) + r"}"
                     ax_error.set_title(subplot_title, color=sapt_color, pad=-4, fontsize=title_fontsize)
 
@@ -1415,7 +1416,7 @@ def violin_plot_table_multi_SAPT_components(
                 x_pos_shift = 0
                 if share_y_axis:
                     x_pos = 0.5
-                    x_pos_shift = -0.3
+                    x_pos_shift = -0.5
                 ax_error.annotate(
                     error_labels,
                     xy=(x_pos, 1),  # Position at the vertical center of the narrow subplot
