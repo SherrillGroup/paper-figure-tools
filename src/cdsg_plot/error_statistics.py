@@ -1035,10 +1035,11 @@ def violin_plot_table_multi_SAPT_components(
     output_filename: str = "output",
     plt_title: str = None,
     bottom: float = 0.4,
+    left: float = None,
     transparent: bool = False,
     widths: float = 0.85,
     figure_size: tuple = None,
-    set_xlable=False,
+    set_xlabel=False,
     x_label_rotation=90,
     x_label_fontsize=8,
     y_label_fontsize=8,
@@ -1075,6 +1076,9 @@ def violin_plot_table_multi_SAPT_components(
     zero_alpha=0.5,
     hide_ytick_label_edges=False,
     add_title=True,
+    ylabel_count=True,
+    disable_xtick_labels=False,
+    bbox_inches="tight",
 ) -> None:
     """
     TODO: maybe a 4xN grid for the 4 components of SAPT?
@@ -1142,6 +1146,7 @@ def violin_plot_table_multi_SAPT_components(
         len(dfs) * 2, columns, height_ratios=grid_heights, width_ratios=grid_widths,
     )  # Adjust height ratios to change the size of subplots
     ax1 = None
+    axs = []
     if wspace is not None:
         gs.update(wspace=wspace)
     print(f"{gs = }")
@@ -1245,6 +1250,7 @@ def violin_plot_table_multi_SAPT_components(
                     gs[ind+1, nn]
                 )
                 ax1 = ax
+            axs.append(ax)
             vplot = ax.violinplot(
                 vData,
                 showmeans=True,
@@ -1351,16 +1357,20 @@ def violin_plot_table_multi_SAPT_components(
             if ind == 0 and nn == columns - 1 and legend_loc is not None:
                 lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
 
-            if set_xlable:
+            if set_xlabel:
                 ax.set_xlabel("Level of Theory", color="k")
             # ax.set_ylabel(f"{subplot_label}\n{ylabel_initial}", color="k")
             if nn == 0:
                 ylabel_row = r"\textbf{" + subplot_label + r"}"
-                ylabel_row += r"(\textbf{" + str(non_null) + r"})" f"\n{ylabel_initial}"
+                if ylabel_count:
+                    ylabel_row += r"(\textbf{" + str(non_null) + r"})" 
+                if ylabel_initial is not None:
+                    ylabel_row += f"\n{ylabel_initial}"
                 ax.set_ylabel(ylabel_row, color="k", fontsize=y_label_fontsize)
 
             ax.grid(color="#54585A", which="major", linewidth=0.5, alpha=0.5, axis="y")
             # ax.grid(color="#54585A", which="minor", linewidth=0.5, alpha=0.5)
+
             for n, xtick in enumerate(ax.get_xticklabels()):
                 try:
                     xtick.set_color(colors[nn][n - 1])
@@ -1376,6 +1386,10 @@ def violin_plot_table_multi_SAPT_components(
                     labelbottom=False,
                 )
 
+            if disable_xtick_labels:
+                plt.setp(ax.xaxis.get_ticklabels(), visible=False)
+                # ax.spines["bottom"].set_visible(False)
+                # ax.tick_params(bottom=False)
             ax_error = plt.subplot(gs[ind, nn], sharex=ax)
             ax_error.spines['top'].set_visible(False)
             ax_error.spines["right"].set_visible(False)
@@ -1440,7 +1454,10 @@ def violin_plot_table_multi_SAPT_components(
 
     if plt_title is not None:
         plt.title(f"{plt_title}")
+        
     fig.subplots_adjust(bottom=bottom)
+    if left:
+        fig.subplots_adjust(left=left)
     ext = "png"
     if len(output_filename.split(".")) > 1:
         output_basename, ext = (
@@ -1455,7 +1472,7 @@ def violin_plot_table_multi_SAPT_components(
     plt.savefig(
         path,
         transparent=transparent,
-        bbox_inches="tight",
+        bbox_inches=bbox_inches,
         dpi=dpi,
     )
     plt.clf()
