@@ -19,8 +19,13 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+license = {text = "MIT"}
 
 [project.urls]
 "Homepage" = "https://github.com/SherrillGroup/paper-figure-tools"
 "Bug Tracker" = "https://github.com/SherrillGroup/paper-figure-tools/issues"
 
+[tool.setuptools-git-versioning]
+enabled = true
+dev_template = "{tag}.{ccount}+git.{sha}"
+dirty_template = "{tag}.{ccount}+git.{sha}.dirty"
