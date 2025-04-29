@@ -233,7 +233,6 @@ def violin_plot(
         bbox_inches="tight",
         dpi=dpi,
     )
-    plt.clf()
     return
 
 
