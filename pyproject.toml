@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cdsg_tools"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="C. David Sherrill", email="sherrill@gatech.edu" },
   { name="Lori A. Burns", email="lori.burns@gmail.com" },
