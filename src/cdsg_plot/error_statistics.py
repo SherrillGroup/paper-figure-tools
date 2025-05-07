@@ -73,7 +73,8 @@ def violin_plot(
     import matplotlib.pyplot as plt
     import pandas as pd
 
-    print(f"Plotting {output_filename}")
+    if output_filename:
+        print(f"Plotting {output_filename}")
     if rcParams is not None:
         plt.rcParams.update(rcParams)
     vLabels, vData = [], []
@@ -217,22 +218,23 @@ def violin_plot(
     if plt_title is not None:
         plt.title(f"{plt_title}")
     fig.subplots_adjust(bottom=bottom)
-    ext = "png"
-    if len(output_filename.split(".")) > 1:
-        output_basename, ext = (
-            ".".join(output_filename.split(".")[:-1]),
-            output_filename.split(".")[-1],
+    if output_filename:
+        ext = "png"
+        if len(output_filename.split(".")) > 1:
+            output_basename, ext = (
+                ".".join(output_filename.split(".")[:-1]),
+                output_filename.split(".")[-1],
+            )
+            path = f"{output_basename}_violin.{ext}"
+        else:
+            path = output_filename
+        print(f"{path}")
+        plt.savefig(
+            path,
+            transparent=transparent,
+            bbox_inches="tight",
+            dpi=dpi,
         )
-        path = f"{output_basename}_violin.{ext}"
-    else:
-        path = output_filename
-    print(f"{path}")
-    plt.savefig(
-        path,
-        transparent=transparent,
-        bbox_inches="tight",
-        dpi=dpi,
-    )
     return
 
 
