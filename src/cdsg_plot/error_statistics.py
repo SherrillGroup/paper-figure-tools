@@ -703,7 +703,6 @@ def violin_plot_table_multi(
         subplot_title = r"\textbf{" + subplot_label + r"}"
         subplot_title += r"(\textbf{" + str(non_null) + r"})" 
         ax_error.set_title(subplot_title, pad=-4)
-
         ax_error.annotate(
             error_labels,
             xy=(0, 1),  # Position at the vertical center of the narrow subplot
@@ -1021,9 +1020,11 @@ def violin_plot_table_multi_horizontal(
     plt.clf()
     return
 
+
 def convert_deltas_ssapt0(k_label):
     k_label = k_label.replace("DMP2", r"$\delta$MP2").replace("SSAPT0", r"\emph{s}SAPT0").replace("WB97", r"$\omega$B97")
     return k_label
+
 
 def violin_plot_table_multi_SAPT_components(
     dfs,
@@ -1213,20 +1214,28 @@ def violin_plot_table_multi_SAPT_components(
                 mae = df_sub[v].apply(lambda x: abs(x)).mean()
                 max_pos_error = df_sub[v].apply(lambda x: x).max()
                 max_neg_error = df_sub[v].apply(lambda x: x).min()
+                empty = False
+                if mae == 0.0:
+                    empty = True
+                mae = f"{mae:.2f}" if not empty else " "
+                max_pos_error = f"{max_pos_error:.2f}" if not empty else " "
+                max_neg_error = f"{max_neg_error:.2f}" if not empty else " "
+                rmse = f"{rmse:.2f}" if not empty else " "
                 errors_ls = []
                 l_delim = table_delimiter if col_ind != len(df_labels_and_columns.keys()) - 1 else ""
                 if MAE:
-                    errors_ls.append(rf"\{MAE}{{{mae:.2f}}}{l_delim}")
+                    errors_ls.append(rf"\{MAE}{{{mae}}}{l_delim}")
                 if RMSE:
-                    errors_ls.append(rf"\{RMSE}{{{rmse:.2f}}}{l_delim}")
+                    errors_ls.append(rf"\{RMSE}{{{rmse}}}{l_delim}")
                 if MaxE:
-                    errors_ls.append(rf"\{MaxE}{{{max_pos_error:.2f}}}{l_delim}")
+                    errors_ls.append(rf"\{MaxE}{{{max_pos_error}}}{l_delim}")
                 if MinE:
-                    errors_ls.append(rf"\{MinE}{{{max_neg_error:.2f}}}{l_delim}")
+                    errors_ls.append(rf"\{MinE}{{{max_neg_error}}}{l_delim}")
                 # if mcure is not None and term != "TOTAL":
                 if mcure is not None:
                     # try:
-                        errors_ls.append(rf"\textrm{mcure[term][k][ind_0]:.2f}{l_delim}")
+                    mcure_value = f"{mcure[term][k][ind_0]:.2f}" if mcure[term][k][ind_0] != 0.0 else " "
+                    errors_ls.append(rf"\textrm{{{mcure_value}}}{l_delim}")
                     # except (Exception) as e:
                     #     print(f"Error: {e}")
                     #     print(f"term: {term}, k: {k}, ind_0: {ind_0}")
@@ -1289,7 +1298,7 @@ def violin_plot_table_multi_SAPT_components(
                 xs_error,
                 [1 for i in range(len(xs_error))],
                 "k--",
-                label=r"$\pm$1 $\mathrm{kcal\cdot mol^{-1}}$",
+                # label=r"$\pm$1 $\mathrm{kcal\cdot mol^{-1}}$",
                 zorder=0,
                 alpha=pm_alpha,
                 linewidth=gridlines_linewidths,
@@ -1318,6 +1327,14 @@ def violin_plot_table_multi_SAPT_components(
                 color=quantile_color,
                 linewidth=quantile_linewidth,
                 label=r"5-95th Percentile",
+            )
+            ax.plot(
+                [],
+                [],
+                linestyle=quantile_style,
+                color='black',
+                linewidth=quantile_linewidth,
+                label="Mean Error",
             )
             navy_blue = (0.0, 0.32, 0.96)
             ax.set_xticks(xs)
@@ -1499,7 +1516,8 @@ def violin_plot_table_multi_general(
     usetex=True,
     rcParams={
         "text.usetex": True,
-        "font.family": "sans-serif",
+        # "font.family": "sans-serif",
+        "font.family": "Helvetica",
         "font.sans-serif": "Helvetica",
         "mathtext.fontset": "custom",
     },
@@ -1717,6 +1735,14 @@ def violin_plot_table_multi_general(
                 color=quantile_color,
                 linewidth=quantile_linewidth,
                 label=r"5-95th Percentile",
+            )
+            ax.plot(
+                [],
+                [],
+                linestyle=quantile_style,
+                color='k',
+                linewidth=quantile_linewidth,
+                label=r"Mean Error",
             )
             navy_blue = (0.0, 0.32, 0.96)
             ax.set_xticks(xs)
