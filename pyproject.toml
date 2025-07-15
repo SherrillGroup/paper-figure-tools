@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cdsg_tools"
-version = "0.0.1"
+version = "0.0.4"
 authors = [
   { name="C. David Sherrill", email="sherrill@gatech.edu" },
   { name="Lori A. Burns", email="lori.burns@gmail.com" },
@@ -19,8 +19,13 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+license = {text = "MIT"}
 
 [project.urls]
 "Homepage" = "https://github.com/SherrillGroup/paper-figure-tools"
 "Bug Tracker" = "https://github.com/SherrillGroup/paper-figure-tools/issues"
 
+[tool.setuptools-git-versioning]
+enabled = true
+dev_template = "{tag}.{ccount}+git.{sha}"
+dirty_template = "{tag}.{ccount}+git.{sha}.dirty"

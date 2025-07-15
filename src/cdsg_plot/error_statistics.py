@@ -73,7 +73,8 @@ def violin_plot(
     import matplotlib.pyplot as plt
     import pandas as pd
 
-    print(f"Plotting {output_filename}")
+    if output_filename:
+        print(f"Plotting {output_filename}")
     if rcParams is not None:
         plt.rcParams.update(rcParams)
     vLabels, vData = [], []
@@ -84,18 +85,28 @@ def violin_plot(
         df[v] = pd.to_numeric(df[v])
         df_sub = df[df[v].notna()].copy()
         vData.append(df_sub[v].to_list())
-        k_label = "\\textbf{" + k + "}"
+        if usetex:
+            k_label = "\\textbf{" + k + "}"
+        else:
+            k_label = k
         k_label = convert_deltas_ssapt0(k_label)
         vLabels.append(k_label)
         m = df_sub[v].max()
         rmse = df_sub[v].apply(lambda x: x**2).mean() ** 0.5
         mae = df_sub[v].apply(lambda x: abs(x)).mean()
         max_error = df_sub[v].apply(lambda x: abs(x)).max()
-        text = r"\textit{%.2f}" % mae
-        text += "\n"
-        text += r"\textbf{%.2f}" % rmse
-        text += "\n"
-        text += r"\textrm{%.2f}" % max_error
+        if usetex:
+            text = r"\textit{%.2f}" % mae
+            text += "\n"
+            text += r"\textbf{%.2f}" % rmse
+            text += "\n"
+            text += r"\textrm{%.2f}" % max_error
+        else:
+            text = r"%.2f" % mae
+            text += "\n"
+            text += r"%.2f" % rmse
+            text += "\n"
+            text += r"%.2f" % max_error
         annotations.append((cnt, m, text))
         cnt += 1
 
@@ -134,11 +145,12 @@ def violin_plot(
     vLabels.insert(0, "")
     xs = [i for i in range(len(vLabels))]
     xs_error = [i for i in range(-1, len(vLabels) + 1)]
+    x_error_label = r"$\pm$1 $\mathrm{kcal\cdot mol^{-1}}$" if usetex else r"within 1 kcal/mol"
     ax.plot(
         xs_error,
         [1 for i in range(len(xs_error))],
         "k--",
-        label=r"$\pm$1 $\mathrm{kcal\cdot mol^{-1}}$",
+        label=x_error_label,
         zorder=0,
         linewidth=0.6,
     )
@@ -206,23 +218,23 @@ def violin_plot(
     if plt_title is not None:
         plt.title(f"{plt_title}")
     fig.subplots_adjust(bottom=bottom)
-    ext = "png"
-    if len(output_filename.split(".")) > 1:
-        output_basename, ext = (
-            ".".join(output_filename.split(".")[:-1]),
-            output_filename.split(".")[-1],
+    if output_filename:
+        ext = "png"
+        if len(output_filename.split(".")) > 1:
+            output_basename, ext = (
+                ".".join(output_filename.split(".")[:-1]),
+                output_filename.split(".")[-1],
+            )
+            path = f"{output_basename}_violin.{ext}"
+        else:
+            path = output_filename
+        print(f"{path}")
+        plt.savefig(
+            path,
+            transparent=transparent,
+            bbox_inches="tight",
+            dpi=dpi,
         )
-        path = f"{output_basename}_violin.{ext}"
-    else:
-        path = output_filename
-    print(f"{path}")
-    plt.savefig(
-        path,
-        transparent=transparent,
-        bbox_inches="tight",
-        dpi=dpi,
-    )
-    plt.clf()
     return
 
 
