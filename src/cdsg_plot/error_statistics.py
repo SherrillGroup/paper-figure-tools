@@ -6,7 +6,7 @@ def create_minor_y_ticks(ylim):
         inc = 10
     if diff > 20:
         inc = 5
-    elif diff > 10:
+    elif diff >= 10:
         inc = 2.5
     elif diff > 2:
         inc = 1
@@ -1234,15 +1234,22 @@ def violin_plot_table_multi_SAPT_components(
                 df[v] = pd.to_numeric(df[v])
                 df_sub = df[df[v].notna()].copy()
                 if len(df_sub) != len(df):
-                    print("Missing data in", k, v)
+                    print("Missing data in:", k, "v:", v)
                 local_value = df_sub[v].to_list()
                 if len(local_value) == 0:
                     local_value = [0] * len(vData[-1])
                 vData.append(local_value)
-                k_label = (
-                    r"\noindent\textbf{" + r"}\\\textbf{".join(k.split(r"\\")) + "}"
-                )
-                # k_label = r"\noindent\textbf{" + k + "}"
+                label_lines = []
+                for line in str(k).split("\n"):
+                    label_lines.extend(line.split(r"\\"))
+
+                if usetex:
+                    k_label = r"\noindent" + r"\\".join(
+                        [rf"\textbf{{{line}}}" for line in label_lines]
+                    )
+                else:
+                    k_label = "\n".join(label_lines)
+
                 k_label = convert_deltas_ssapt0(k_label)
                 vLabels.append(k_label)
                 m = df_sub[v].max()
@@ -1274,7 +1281,11 @@ def violin_plot_table_multi_SAPT_components(
                 # if mcure is not None and term != "TOTAL":
                 if mcure is not None:
                     # try:
-                    mcure_value = f"{mcure[term][k][ind_0]:.2f}" if mcure[term][k][ind_0] != 0.0 else " "
+                    mcure_value = (
+                        f"{mcure[term][k][ind_0]:.2f}"
+                        if mcure[term][k][ind_0] != 0.0
+                        else " "
+                    )
                     errors_ls.append(rf"\textrm{{{mcure_value}}}{l_delim}")
                     # except (Exception) as e:
                     #     print(f"Error: {e}")
@@ -1374,7 +1385,7 @@ def violin_plot_table_multi_SAPT_components(
                 [],
                 [],
                 linestyle=quantile_style,
-                color='black',
+                color="black",
                 linewidth=quantile_linewidth,
                 label="Mean Error",
             )
@@ -1414,7 +1425,7 @@ def violin_plot_table_multi_SAPT_components(
                     ax.set_yticks([])
 
             if ind == 0 and nn == columns - 1 and legend_loc is not None:
-                lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="8")
+                lg = ax.legend(loc=legend_loc, edgecolor="black", fontsize="7")
 
             if set_xlabel:
                 ax.set_xlabel("Level of Theory", color="k")
@@ -1807,7 +1818,7 @@ def violin_plot_table_multi_general(
                 [],
                 [],
                 linestyle=quantile_style,
-                color='k',
+                color="k",
                 linewidth=quantile_linewidth,
                 label=r"Mean Error",
             )
